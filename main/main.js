@@ -117,7 +117,7 @@
       if (!price) return `<span class="ask">${esc(t('ask'))}</span>`;
       const range = hasRange(p);
       return `${range ? `<span class="from">${esc(t('from'))}</span>` : ''}<b>${money(price)}</b><span class="cur">${cur()}</span>` +
-        (!range && p.old_price > price ? `<s>${money(p.old_price)} ${cur()}</s>` : '');
+        (p.old_price > price ? `<s>${money(p.old_price)} ${cur()}</s>` : '');
     }
     const badgeHTML = p => !p.in_stock ? `<span class="badge out">${esc(t('outBadge'))}</span>` : p.badge ? `<span class="badge">${esc(MK.L(p, 'badge'))}</span>` : '';
 
@@ -195,7 +195,7 @@
         renderChips();
         if (pd.open && pdState) { const p = byId.get(pdState.p.id); if (p) { pdState.p = p; renderPD(); } else pd.close(); }
         if (cartDlg.open) renderCart();
-        if (pendingOpen) { const id = decodeURIComponent(pendingOpen); pendingOpen = ''; if (byId.has(id)) setTimeout(() => openProduct(id), 200); }
+        if (pendingOpen) { let id = ''; try { id = decodeURIComponent(pendingOpen); } catch (_) { } pendingOpen = ''; if (id && byId.has(id)) setTimeout(() => openProduct(id), 200); }
       }
       renderShop(); renderBar();
     }
@@ -206,7 +206,29 @@
       renderPD();
       MK.open(pd);
       pdBody.scrollTop = 0;
+      startAuto();
     }
+
+    let autoT = 0;
+    const AUTO_MS = 3500;
+    const stopAuto = () => { clearInterval(autoT); autoT = 0; };
+    function showImg(i) {
+      if (!pdState) return;
+      const list = imgsOf(pdState.p); if (list.length < 2) return;
+      pdState.i = ((i % list.length) + list.length) % list.length;
+      const im = pdBody.querySelector('.pd-media img');
+      if (im) {
+        im.classList.remove('swap'); void im.offsetWidth; im.classList.add('swap');
+        im.src = list[pdState.i];
+      }
+      pdBody.querySelectorAll('.pd-th').forEach((t, k) => t.setAttribute('aria-pressed', String(k === pdState.i)));
+    }
+    function startAuto() {
+      stopAuto();
+      if (!pdState || imgsOf(pdState.p).length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      autoT = setInterval(() => { if (!pd.open || document.hidden) return; showImg((pdState.i || 0) + 1); }, AUTO_MS);
+    }
+    pd.addEventListener('close', stopAuto);
 
     function renderPD() {
       const { p, o, c, q: qty } = pdState;
@@ -217,13 +239,13 @@
       const desc = MK.L(p, 'description');
       pdBody.innerHTML = `
 <div class="pd-media media">${pdImg(p)}${badgeHTML(p)}</div>
-${imgsOf(p).length > 1 ? `<div class="pd-thumbs">${imgsOf(p).map((u, i) => `<button type="button" class="pd-th" data-img="${i}" aria-pressed="${i === (pdState.i || 0)}" aria-label="${i + 1}"><img src="${esc(u)}" alt="" width="64" height="64" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join('')}</div>` : ''}
+${imgsOf(p).length > 1 ? `<div class="pd-thumbs">${imgsOf(p).map((u, i) => `<button type="button" class="pd-th" data-img="${i}" aria-pressed="${i === (pdState.i || 0)}" aria-label="${i + 1}"><img src="${esc(u)}" alt="" width="64" height="64" decoding="async" referrerpolicy="no-referrer"></button>`).join('')}</div>` : ''}
 <div>
   ${p.brand ? `<p class="brand-s">${esc(p.brand)}</p>` : ''}
   <h3 class="pd-title">${esc(nameOf(p))}</h3>
 </div>
 <p class="pd-price">${price > 0
-    ? `${money(price)} <span class="cur">${cur()}</span>${p.old_price > price && !(optOf(p, o) && optOf(p, o).p) ? `<s>${money(p.old_price)} ${cur()}</s>` : ''}`
+    ? `${money(price)} <span class="cur">${cur()}</span>${p.old_price > price ? `<s>${money(p.old_price)} ${cur()}</s>` : ''}`
     : `<span class="cur">${esc(t('ask'))}</span>`}</p>
 ${p.options.length > 1 ? `
 <div class="field"><span class="field-label" id="lbO">${esc(t('option'))}</span>
@@ -246,7 +268,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
 
     pd.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b || !pdState) return;
-      if (b.dataset.img != null) { pdState.i = Number(b.dataset.img) || 0; renderPD(); }
+      if (b.dataset.img != null) { showImg(Number(b.dataset.img) || 0); startAuto(); }
       else if (b.dataset.opt != null) { pdState.o = b.dataset.opt; renderPD(); }
       else if (b.dataset.color != null) { pdState.c = b.dataset.color; renderPD(); }
       else if (b.dataset.q) { pdState.q = Math.max(1, Math.min(MAX_QTY, pdState.q + Number(b.dataset.q))); renderPD(); }
@@ -296,7 +318,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       if (method() !== 'delivery') return { fee: 0, state: 'none' };
       const g = shipList().find(x => x.name === fGov.value);
       if (!g) return { fee: 0, state: 'pick' };
-      if (!g.known) return { fee: 0, state: 'free' };
+      if (!g.known) return { fee: 0, state: 'ask' };
       return { fee: g.fee, state: g.fee > 0 ? 'fee' : 'free' };
     }
     function renderMethod() {
@@ -332,6 +354,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
     function openCart() {
       try {
         const c = JSON.parse(localStorage.getItem(CUST_KEY) || '{}');
+        if (c.name) $('#fRemember').checked = true;
         if (!fName.value && c.name) fName.value = String(c.name).slice(0, 60);
         if (!fAddr.value && c.address) fAddr.value = String(c.address).slice(0, 200);
         if (!fPhone.value && c.phone) fPhone.value = String(c.phone).slice(0, 20);
@@ -396,7 +419,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       lines.push('*الطلب:*');
       cart.forEach((i, k) => {
         const p = byId.get(i.id); const pr = priceFor(p, i.o);
-        lines.push(`*${k + 1}.* ${wa(p.name)}`);
+        lines.push(`*${k + 1}.* ${wa(p.name)} \`${p.id}\``);
         const ex = [i.o && `الاختيار: ${wa(i.o)}`, i.c && `اللون: ${wa(i.c)}`].filter(Boolean);
         if (ex.length) lines.push(`    _${ex.join(' | ')}_`);
         lines.push(pr > 0 ? `    ${i.q} × ${money(pr)} = *${money(pr * i.q)} ${cu}*` : `    الكمية: ${i.q} | _السعر عند التواصل_`);
@@ -404,7 +427,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       lines.push(line);
       lines.push(`*عدد المنتجات:* ${count}`);
       lines.push(`*إجمالي المنتجات:* ${s.sum > 0 ? money(s.sum) + ' ' + cu : 'عند التواصل'}`);
-      if (m === 'delivery') lines.push(`*مصاريف الشحن:* ${sh.state === 'fee' ? money(sh.fee) + ' ' + cu : 'مجاني'}`);
+      if (m === 'delivery') lines.push(`*مصاريف الشحن:* ${sh.state === 'fee' ? money(sh.fee) + ' ' + cu : sh.state === 'ask' ? 'هتتحدد على واتساب' : 'مجاني'}`);
       lines.push(`*الإجمالي المطلوب:* *${s.sum + sh.fee > 0 ? money(s.sum + sh.fee) + ' ' + cu : 'عند التواصل'}*` + (s.unpriced ? ' _(+ منتجات سعرها عند التواصل)_' : ''));
       lines.push(line);
       lines.push('*بيانات العميل:*');
@@ -434,7 +457,8 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       if (!method()) { MK.toast(t('noMethod')); return; }
       const note = fNote.value.trim().slice(0, 300);
       if (!cart.length) return;
-      try { localStorage.setItem(CUST_KEY, JSON.stringify({ name, phone, address: address || (JSON.parse(localStorage.getItem(CUST_KEY) || '{}').address || ''), gov: gov || (JSON.parse(localStorage.getItem(CUST_KEY) || '{}').gov || ''), method: method() })); } catch (_) { }
+      if (!$('#fRemember').checked) { try { localStorage.removeItem(CUST_KEY); } catch (_) { } }
+      else try { localStorage.setItem(CUST_KEY, JSON.stringify({ name, phone, address: address || (JSON.parse(localStorage.getItem(CUST_KEY) || '{}').address || ''), gov: gov || (JSON.parse(localStorage.getItem(CUST_KEY) || '{}').gov || ''), method: method() })); } catch (_) { }
       const url = `https://wa.me/${num}?text=${encodeURIComponent(buildMessage(name, phone, address, note, gov))}`;
       const w = window.open(url, '_blank');
       if (w) w.opener = null; else location.href = url;

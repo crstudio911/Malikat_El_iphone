@@ -1,9 +1,27 @@
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-UD3Ppug6NUvhzawV/LzZe0QTak6IyAmMJ0knYXVUpIQ='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.workers.dev; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'sha256-UD3Ppug6NUvhzawV/LzZe0QTak6IyAmMJ0knYXVUpIQ='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://malikateliphone.7oka12345678910.workers.dev; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   Cross-Origin-Opener-Policy: same-origin
 
+/
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+/main.html
+  Cache-Control: no-cache
+
+/core/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/main/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/home/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
 /img/*
-  Cache-Control: public, max-age=86400
+  Cache-Control: public, max-age=604800
