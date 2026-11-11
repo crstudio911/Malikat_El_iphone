@@ -23,6 +23,7 @@
 <link rel="stylesheet" href="core/one.css">
 <link rel="stylesheet" href="main/main.css">
 <script src="core/config.js" defer></script>
+<script src="core/lists.js" defer></script>
 <script src="core/one.js" defer></script>
 <script src="main/main.js" defer></script>
 </head>
@@ -89,7 +90,11 @@
     <div class="sheet-head"><h2 id="cartHead" data-t="cartHead">طلبك</h2><button class="close" type="button" data-close data-t-al="close" aria-label="إغلاق"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="sheet-body">
       <div class="lines" id="cartLines"></div>
-      <div class="total"><span data-t="total">الإجمالي</span><span class="v" id="cartTotal"></span></div>
+      <div class="sums">
+        <div class="sum-r"><span data-t="subTotal">المنتجات</span><span id="cartSub"></span></div>
+        <div class="sum-r" id="shipRow"><span data-t="shipFee">الشحن</span><span id="cartShip"></span></div>
+        <div class="total"><span data-t="grand">الإجمالي</span><span class="v" id="cartTotal"></span></div>
+      </div>
       <p class="note-s" id="cartNote" hidden></p>
       <form class="form" id="orderForm" novalidate>
         <p class="req-hint" data-t="reqHint">الحقول اللي عليها * لازم تتملى.</p>
@@ -102,6 +107,18 @@
           <span class="hint" data-t="fPhoneHint">رقم غير رقم الواتساب اللي هتبعت منه، عشان لو مقدرناش نوصلك.</span>
           <span class="err" id="fPhoneErr" data-t="fPhoneErr" hidden>اكتب رقم موبايل صحيح.</span>
         </label>
+        <fieldset class="method" id="fMethod">
+          <legend><span data-t="fMethod">طريقة الاستلام</span> <b class="star" aria-hidden="true">*</b></legend>
+          <div class="seg">
+            <label class="seg-o" id="mDelWrap"><input type="radio" name="method" value="delivery" checked><span class="seg-b"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 9h4l3 3.5V16h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></svg><b data-t="mDel">توصيل</b><small data-t="mDelS">لحد باب البيت</small></span></label>
+            <label class="seg-o" id="mPickWrap"><input type="radio" name="method" value="pickup"><span class="seg-b"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9l1.5-5h13L20 9M4 9v11h16V9M4 9h16M9 20v-6h6v6"/></svg><b data-t="mPick">استلام من المحل</b><small data-t="mPickS">من غير مصاريف شحن</small></span></label>
+          </div>
+        </fieldset>
+        <label id="fGovWrap"><span><span data-t="fGov">المحافظة</span> <b class="star" aria-hidden="true">*</b></span>
+          <select id="fGov" name="gov" required aria-required="true"></select>
+          <span class="err" id="fGovErr" data-t="fGovErr" hidden>اختار المحافظة.</span>
+        </label>
+        <div class="pick-info" id="pickInfo" hidden></div>
         <label id="fAddrWrap"><span><span data-t="fAddr">العنوان</span> <b class="star" aria-hidden="true">*</b></span>
           <input id="fAddr" name="address" type="text" autocomplete="street-address" maxlength="200" required aria-required="true">
           <span class="err" id="fAddrErr" data-t="fAddrErr" hidden>اكتب عنوانك بالتفصيل.</span>
@@ -113,7 +130,7 @@
     </div>
     <div class="sheet-foot">
       <button class="btn btn-main btn-block" type="button" id="sendOrder">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.38A9.9 9.9 0 1 0 12.04 2zm5.8 14.1c-.25.7-1.45 1.33-2 1.4-.52.07-1.17.1-1.88-.12a17 17 0 0 1-1.7-.63c-3-1.3-4.95-4.32-5.1-4.52-.15-.2-1.2-1.6-1.2-3.04 0-1.45.76-2.16 1.03-2.45.27-.3.6-.37.8-.37h.58c.18 0 .43-.07.67.5.25.6.84 2.06.92 2.2.07.15.12.32.02.52-.1.2-.15.32-.3.5l-.45.52c-.15.15-.3.31-.13.6.17.3.77 1.27 1.65 2.05 1.13 1 2.08 1.32 2.38 1.47.3.15.47.12.65-.07.17-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.72.8 2.02.96.3.15.5.22.57.35.07.12.07.7-.18 1.4z"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
         <span data-t="send">إرسال الطلب على واتساب</span>
       </button>
       <button class="btn btn-ghost btn-block" type="button" id="clearCart" data-t="clear">تفريغ السلة</button>

@@ -22,7 +22,7 @@
       st1: 'أصلي', st1s: 'كل الأجهزة', st2: 'ضمان', st2s: 'على كل جهاز', st3: '48 ساعة', st3s: 'شحن للمحافظات',
       mq: ['أصلي 100%', 'ضمان حقيقي', 'شحن سريع', 'جرابات فاخرة', 'أحسن سعر', 'طلب على واتساب'],
       deckEyebrow: 'اختيارات الأسبوع', deckTitle: 'كل اللي تحبه، في كارت واحد.', deckHint: 'انزل لتحت عشان الكروت تتفرد',
-      fanTitle: 'كل ألوانك. في مكان واحد.', fanSub: 'موبايلات وجرابات بكل الألوان اللي تحبها، بضمان وأسعار ملكة.',
+      fanTitle: 'كل ألوانك. في مكان واحد.', fanSub: 'موبايلات وجرابات بكل الألوان اللي تحبها، بضمان وأحسن الأسعار.',
       whyEyebrow: 'ليه ملكة الأيفون', whyTitle: 'تجربة شراء تليق بيك.',
       f1: 'أجهزة أصلية', f1s: 'كل جهاز مضمون ومتفحّص قبل ما يوصلك.',
       f2: 'ضمان على كل جهاز', f2s: 'لو حصلت أي مشكلة، إحنا معاك.',
@@ -45,6 +45,7 @@
       pdHead: 'تفاصيل المنتج', close: 'إغلاق', cartHead: 'طلبك', total: 'الإجمالي',
       unpriced: 'في منتجات سعرها عند التواصل ومش داخلة في الإجمالي.',
       fName: 'الاسم', fNameErr: 'اكتب اسمك عشان نعرف نكلمك.', fAddr: 'العنوان', fAddrErr: 'اكتب عنوانك بالتفصيل.', fPhone: 'رقم موبايل تاني للتواصل', fPhoneHint: 'رقم غير رقم الواتساب اللي هتبعت منه، عشان لو مقدرناش نوصلك.', fPhoneErr: 'اكتب رقم موبايل صحيح.', reqHint: 'الحقول اللي عليها * لازم تتملى.', fixForm: 'كمّل البيانات المطلوبة الأول.', annTag: 'إعلان', annOk: 'تمام', annShop: 'تسوق دلوقتي', annClose: 'إغلاق', waFloat: 'كلمنا على واتساب', caseEyebrow: 'جرابك مش لاقيه؟', caseTitle: 'قولنا موبايلك، ونجيبلك جرابه.', caseSub: 'لو الجراب اللي عايزه مش موجود في المتجر، اكتب نوع موبايلك وابعتلنا على واتساب ونوفرهولك.', caseModel: 'نوع الموبايل', caseModelPh: 'مثلاً: iPhone 15 Pro Max', caseDesc: 'شكل الجراب (اختياري)', caseDescPh: 'اللون، الخامة، أو أي تفاصيل', caseSend: 'ابعت طلب الجراب', caseErr: 'اكتب نوع موبايلك الأول.', fNote: 'ملاحظات (اختياري)',
+      fMethod: 'طريقة الاستلام', mDel: 'توصيل', mDelS: 'لحد باب البيت', mPick: 'استلام من المحل', mPickS: 'من غير مصاريف شحن', fGov: 'المحافظة', fGovPh: 'اختار المحافظة', fGovErr: 'اختار المحافظة.', subTotal: 'المنتجات', shipFee: 'الشحن', shipFree: 'مجاني', shipPick: 'اختار المحافظة', shipAsk: 'هيتحدد على واتساب', grand: 'الإجمالي', pickAt: 'هتستلم طلبك من المحل', pickHours: 'المواعيد', noMethod: 'الطلبات مش متاحة دلوقتي.',
       send: 'إرسال الطلب على واتساب', clear: 'تفريغ السلة', cleared: 'اتفرّغت السلة',
       noWa: 'الطلب مش متاح دلوقتي، كلمنا من صفحاتنا.', waOpened: 'اتفتح واتساب، اضغط إرسال عشان الطلب يوصلنا',
       cart: 'السلة', pageFail: 'حصلت مشكلة، حاول تاني.'
@@ -61,7 +62,7 @@
       st1: 'Genuine', st1s: 'Every device', st2: 'Warranty', st2s: 'On every phone', st3: '48 hours', st3s: 'Nationwide shipping',
       mq: ['100% Genuine', 'Real warranty', 'Fast shipping', 'Premium cases', 'Best price', 'Order on WhatsApp'],
       deckEyebrow: 'Picks of the week', deckTitle: 'Everything you love, one card away.', deckHint: 'Scroll down to fan out the cards',
-      fanTitle: 'Every color. One place.', fanSub: 'Phones and cases in every color you love, with warranty and royal prices.',
+      fanTitle: 'Every color. One place.', fanSub: 'Phones and cases in every color you love, with warranty and the best prices.',
       whyEyebrow: 'Why iPhone Queen', whyTitle: 'Shopping that feels made for you.',
       f1: 'Genuine devices', f1s: 'Every device is verified and checked before it reaches you.',
       f2: 'Warranty on everything', f2s: 'If anything goes wrong, we have your back.',
@@ -84,6 +85,7 @@
       pdHead: 'Product details', close: 'Close', cartHead: 'Your order', total: 'Total',
       unpriced: 'Some items are priced on request and are not included in the total.',
       fName: 'Name', fNameErr: 'Please enter your name so we can reach you.', fAddr: 'Address', fAddrErr: 'Please enter your full address.', fPhone: 'Another phone number', fPhoneHint: 'A number other than the WhatsApp one you order from, in case we cannot reach you.', fPhoneErr: 'Please enter a valid phone number.', reqHint: 'Fields marked * are required.', fixForm: 'Please complete the required details first.', annTag: 'Announcement', annOk: 'Got it', annShop: 'Shop now', annClose: 'Close', waFloat: 'Chat on WhatsApp', caseEyebrow: 'Can’t find your case?', caseTitle: 'Tell us your phone. We’ll get the case.', caseSub: 'If the case you want isn’t in the shop, type your phone model and message us on WhatsApp. We’ll source it for you.', caseModel: 'Phone model', caseModelPh: 'e.g. iPhone 15 Pro Max', caseDesc: 'Case details (optional)', caseDescPh: 'Color, material or any details', caseSend: 'Send case request', caseErr: 'Please enter your phone model first.', fNote: 'Notes (optional)',
+      fMethod: 'How to receive', mDel: 'Delivery', mDelS: 'To your door', mPick: 'Store pickup', mPickS: 'No shipping fee', fGov: 'Governorate', fGovPh: 'Choose governorate', fGovErr: 'Please choose your governorate.', subTotal: 'Products', shipFee: 'Shipping', shipFree: 'Free', shipPick: 'Choose governorate', shipAsk: 'Confirmed on WhatsApp', grand: 'Total', pickAt: 'You will pick up your order from the store', pickHours: 'Hours', noMethod: 'Ordering is not available right now.',
       send: 'Send order on WhatsApp', clear: 'Empty cart', cleared: 'Cart emptied',
       noWa: 'Ordering is not available right now, reach us on our pages.', waOpened: 'WhatsApp opened, tap send so your order reaches us',
       cart: 'Cart', pageFail: 'Something went wrong, please try again.'
@@ -212,7 +214,7 @@
   MK.reload = () => { MK.status = 'loading'; load(); };
   MK.cfg = () => Object.assign({
     store_name: DICT.ar.defName, store_tagline: '', currency: 'ج.م', whatsapp_number: '',
-    orders_enabled: true, closed_message: 'الطلبات متوقفة مؤقتًا.', ask_address: true,
+    orders_enabled: true, closed_message: 'الطلبات متوقفة مؤقتًا.', delivery_enabled: true, pickup_enabled: true, shipping: '',
     order_header: 'السلام عليكم، عايز أطلب:', order_footer: ''
   }, (MK.data && MK.data.config) || {});
 
@@ -225,7 +227,7 @@
     facebook: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H7.9v3h2.6V21z"/></svg>',
     instagram: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>',
     tiktok: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.6 3c.4 2.2 1.8 3.6 4 3.8v3.1c-1.5.1-2.8-.4-4-1.2v6.1c0 3.5-2.6 5.9-5.8 5.9A5.8 5.8 0 0 1 5 14.9c0-3.6 3.1-6.2 6.7-5.7v3.2c-1.7-.4-3.4.7-3.4 2.5 0 1.5 1.2 2.6 2.6 2.6 1.6 0 2.6-1 2.6-3V3z"/></svg>',
-    whatsapp: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.38A9.9 9.9 0 1 0 12.04 2zm0 1.8a8.1 8.1 0 1 1-4.3 15l-.3-.2-3.1.8.8-3-.2-.3A8.1 8.1 0 0 1 12.04 3.8zm-3.3 4.3c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 5 4.4 2.5 1 3 .8 3.5.7.5-.1 1.7-.7 2-1.4.2-.7.2-1.3.2-1.4l-.5-.3-1.9-.9c-.3-.1-.4-.1-.6.1l-.9 1.1c-.2.2-.3.2-.6.1a6.5 6.5 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.5l-.9-2.1c-.2-.5-.4-.5-.6-.5z"/></svg>'
+    whatsapp: '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>'
   };
 
   function renderFooter() {
@@ -269,7 +271,7 @@
     if (!a) {
       a = document.createElement('a'); a.id = 'waFloat'; a.className = 'wa-float';
       a.target = '_blank'; a.rel = 'noopener noreferrer';
-      a.innerHTML = ICON.whatsapp.replace(/width="18" height="18"/, 'width="30" height="30"') + '<span class="wa-tip"></span>';
+      a.innerHTML = ICON.whatsapp.replace(/width="18" height="18"/, 'width="32" height="32"') + '<span class="wa-tip"></span>';
       document.body.appendChild(a);
     }
     a.href = 'https://wa.me/' + n;

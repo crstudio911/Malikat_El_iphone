@@ -225,3 +225,26 @@ dialog.sheet{border-radius:var(--r-l) var(--r-l) 0 0}
 .pd-th{flex:none;width:64px;height:64px;border-radius:14px;overflow:hidden;border:2px solid var(--line);background:var(--surface-2);padding:0;transition:border-color .2s,transform .2s}
 .pd-th img{width:100%;height:100%;object-fit:cover}
 .pd-th[aria-pressed="true"]{border-color:var(--brand);transform:translateY(-2px)}
+.method{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.method legend{font-size:.9rem;font-weight:600;padding:0;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.seg-o{position:relative;cursor:pointer}
+.seg-o input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.seg-b{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:14px;border-radius:16px;border:1.5px solid var(--line);background:var(--surface);transition:border-color .2s,background .2s,box-shadow .2s}
+.seg-b svg{color:var(--ink-2);margin-bottom:4px}
+.seg-b b{font-size:.95rem}
+.seg-b small{font-size:.78rem;font-weight:400;color:var(--ink-2)}
+.seg-o input:checked+.seg-b{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 9%,var(--surface));box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 16%,transparent)}
+.seg-o input:checked+.seg-b svg{color:var(--brand)}
+.seg-o input:focus-visible+.seg-b{outline:2px solid var(--brand);outline-offset:2px}
+.form select{width:100%;min-height:48px;padding:0 14px;border-radius:var(--r-s);border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-weight:500;outline:none}
+.form select:focus{border-color:var(--brand)}
+.form select.bad{border-color:var(--danger);box-shadow:0 0 0 3px color-mix(in srgb,var(--danger) 18%,transparent)}
+.pick-info{display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:14px;background:color-mix(in srgb,var(--brand) 8%,var(--surface));border:1px dashed color-mix(in srgb,var(--brand) 40%,var(--line));font-size:.88rem;color:var(--ink-2)}
+.pick-info b{color:var(--ink);font-size:.92rem}
+.sums{display:flex;flex-direction:column;gap:8px;padding:14px 0;border-top:1px solid var(--line)}
+.sum-r{display:flex;justify-content:space-between;font-size:.92rem;color:var(--ink-2)}
+.sum-r span:last-child{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.sums .total{padding-top:8px;border-top:1px dashed var(--line)}
+.chip-ic{margin-inline-end:8px;flex:none;color:var(--brand)}
+.chip[aria-pressed="true"] .chip-ic{color:inherit}

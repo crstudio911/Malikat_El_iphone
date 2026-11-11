@@ -10,6 +10,8 @@
     const cartDlg = $('#cart'), linesEl = $('#cartLines'), totalEl = $('#cartTotal'), noteEl = $('#cartNote');
     const fName = $('#fName'), fAddr = $('#fAddr'), fNote = $('#fNote'), fNameErr = $('#fNameErr');
     const fPhone = $('#fPhone'), fPhoneErr = $('#fPhoneErr'), fAddrErr = $('#fAddrErr');
+    const fGov = $('#fGov'), fGovErr = $('#fGovErr');
+    const LISTS = window.MK_LISTS || { ICONS: {}, GOV: [], parseShip: () => [] };
 
     const LOGO = 'img/logo.webp';
     const CART_KEY = 'mk_cart_v1', CUST_KEY = 'mk_customer_v1';
@@ -147,7 +149,7 @@
       catsEl.hidden = cats.length < 2;
       if (cats.length < 2) return;
       const mk = (val, text) => `<button class="chip" type="button" data-cat="${esc(val)}" aria-pressed="${cat === val}">${text}</button>`;
-      catsEl.innerHTML = mk('all', esc(t('all'))) + cats.map(c => mk(c.name, (c.image ? `<img class="chip-img" src="${esc(c.image)}" alt="" width="26" height="26" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : catIcon(c.name + ' ' + (c.en || ''))) + esc(MK.catL(c.name)))).join('');
+      catsEl.innerHTML = mk('all', esc(t('all'))) + cats.map(c => mk(c.name, (c.image ? `<img class="chip-img" src="${esc(c.image)}" alt="" width="26" height="26" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : (LISTS.ICONS[c.icon] ? LISTS.ICONS[c.icon].svg.replace(/width="22" height="22"/, 'width="18" height="18" class="chip-ic"') : catIcon(c.name + ' ' + (c.en || '')))) + esc(MK.catL(c.name)))).join('');
     }
 
     function renderShop() {
@@ -272,13 +274,60 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
   </div>
 </div>`;
       }).join('');
-      const s = totals();
-      totalEl.innerHTML = s.sum > 0 ? `${money(s.sum)} ${cur()}` : '—';
-      noteEl.hidden = !s.unpriced;
-      noteEl.textContent = s.unpriced ? t('unpriced') : '';
-      $('#fAddrWrap').hidden = cfg().ask_address === false;
+      renderMethod();
+      renderSums();
       syncSend();
     }
+
+    const canDel = () => cfg().delivery_enabled !== false;
+    const canPick = () => cfg().pickup_enabled !== false;
+    const shipList = () => {
+      const l = LISTS.parseShip(cfg().shipping);
+      return l.length ? l.map(x => Object.assign({ known: true }, x)) : LISTS.GOV.map(g => ({ name: g[0], fee: 0, known: false }));
+    };
+    const govL = n => { if (MK.lang() !== 'en') return n; const g = LISTS.GOV.find(x => x[0] === n); return g ? g[1] : n; };
+    function method() {
+      const m = (cartDlg.querySelector('input[name=method]:checked') || {}).value;
+      if (m === 'pickup' && canPick()) return 'pickup';
+      if (canDel()) return 'delivery';
+      return canPick() ? 'pickup' : '';
+    }
+    function shipNow() {
+      if (method() !== 'delivery') return { fee: 0, state: 'none' };
+      const g = shipList().find(x => x.name === fGov.value);
+      if (!g) return { fee: 0, state: 'pick' };
+      if (!g.known) return { fee: 0, state: 'ask' };
+      return { fee: g.fee, state: g.fee > 0 ? 'fee' : 'free' };
+    }
+    function renderMethod() {
+      const d = canDel(), pk = canPick();
+      $('#mDelWrap').hidden = !d; $('#mPickWrap').hidden = !pk;
+      $('#fMethod').hidden = !d && !pk;
+      const m = method();
+      cartDlg.querySelectorAll('input[name=method]').forEach(r => { r.checked = r.value === m; });
+      const keep = fGov.value;
+      fGov.innerHTML = `<option value="">${esc(t('fGovPh'))}</option>` + shipList().map(g => `<option value="${esc(g.name)}">${esc(govL(g.name))}${g.known ? ' — ' + (g.fee > 0 ? money(g.fee) + ' ' + cur() : esc(t('shipFree'))) : ''}</option>`).join('');
+      if (shipList().some(g => g.name === keep)) fGov.value = keep;
+      const del = m === 'delivery';
+      $('#fGovWrap').hidden = !del; $('#fAddrWrap').hidden = !del; $('#shipRow').hidden = !del;
+      const pi = $('#pickInfo');
+      pi.hidden = m !== 'pickup';
+      if (m === 'pickup') {
+        const a = MK.cfgL('address'), h = MK.cfgL('open_hours');
+        pi.innerHTML = `<b>${esc(t('pickAt'))}</b>${a ? `<span>${esc(a)}</span>` : ''}${h ? `<span>${esc(t('pickHours'))}: ${esc(h)}</span>` : ''}`;
+      }
+    }
+    function renderSums() {
+      const s = totals(), sh = shipNow();
+      $('#cartSub').innerHTML = s.sum > 0 ? `${money(s.sum)} ${cur()}` : '—';
+      $('#cartShip').innerHTML = sh.state === 'fee' ? `${money(sh.fee)} ${cur()}` : esc(t(sh.state === 'free' ? 'shipFree' : sh.state === 'ask' ? 'shipAsk' : 'shipPick'));
+      const g = s.sum + sh.fee;
+      totalEl.innerHTML = g > 0 ? `${money(g)} ${cur()}` : '—';
+      noteEl.hidden = !s.unpriced;
+      noteEl.textContent = s.unpriced ? t('unpriced') : '';
+    }
+    $('#fMethod').addEventListener('change', () => { renderMethod(); renderSums(); syncSend(); });
+    fGov.addEventListener('change', () => { fGovErr.hidden = true; fGov.classList.remove('bad'); renderSums(); syncSend(); });
 
     function openCart() {
       try {
@@ -286,8 +335,11 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
         if (!fName.value && c.name) fName.value = String(c.name).slice(0, 60);
         if (!fAddr.value && c.address) fAddr.value = String(c.address).slice(0, 200);
         if (!fPhone.value && c.phone) fPhone.value = String(c.phone).slice(0, 20);
+        if (c.method) { const r = cartDlg.querySelector(`input[name=method][value="${c.method === 'pickup' ? 'pickup' : 'delivery'}"]`); if (r) r.checked = true; }
+        renderMethod();
+        if (!fGov.value && c.gov && shipList().some(g => g.name === c.gov)) fGov.value = c.gov;
       } catch (_) { }
-      [[fName, fNameErr], [fPhone, fPhoneErr], [fAddr, fAddrErr]].forEach(([i, e]) => { e.hidden = true; i.classList.remove('bad'); });
+      [[fName, fNameErr], [fPhone, fPhoneErr], [fAddr, fAddrErr], [fGov, fGovErr]].forEach(([i, e]) => { e.hidden = true; i.classList.remove('bad'); });
       renderCart(); syncSend();
       if (cart.length) MK.open(cartDlg);
     }
@@ -304,17 +356,18 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
     $('#clearCart').addEventListener('click', () => { cart = []; saveCart(); renderBar(); cartDlg.close(); MK.toast(t('cleared')); });
     const wa = s => String(s == null ? '' : s).replace(/[*_~`]/g, '').replace(/\s+/g, ' ').trim();
 
-    const needAddr = () => cfg().ask_address !== false;
+    const needAddr = () => method() === 'delivery';
     const phoneOk = v => { const d = v.replace(/[\s\-()+]/g, ''); return /^\d{8,15}$/.test(d); };
     const checks = () => [
       [fName, fNameErr, fName.value.trim().length >= 2],
       [fPhone, fPhoneErr, phoneOk(fPhone.value.trim())],
+      [fGov, fGovErr, !needAddr() || !!fGov.value],
       [fAddr, fAddrErr, !needAddr() || fAddr.value.trim().length >= 5]
     ];
     function syncSend() {
       const ok = checks().every(c => c[2]);
       const btn = $('#sendOrder');
-      btn.disabled = !ordersOpen() || !cart.length;
+      btn.disabled = !ordersOpen() || !cart.length || !method();
       btn.classList.toggle('not-ready', !ok);
     }
 
@@ -324,22 +377,30 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       return n.length >= 8 && n.length <= 15 ? n : '';
     }
 
-    function buildMessage(name, phone, address, note) {
-      const c = cfg(); const s = totals(); const lines = [];
-      if (c.order_header) lines.push(wa(c.order_header), '');
-      lines.push('*الطلب:*');
+    function buildMessage(name, phone, address, note, gov) {
+      const c = cfg(); const s = totals(); const sh = shipNow(); const m = method(); const cu = c.currency || 'ج.م';
+      const line = '────────────', lines = [];
+      lines.push('*فاتورة طلب*');
+      if (c.order_header) lines.push(wa(c.order_header));
+      lines.push(line);
       cart.forEach((i, k) => {
         const p = byId.get(i.id); const pr = priceFor(p, i.o);
-        const v = [i.o, i.c].filter(Boolean).map(wa).join(' - ');
-        lines.push(`${k + 1}) ${wa(p.name)}${v ? ' (' + v + ')' : ''} × ${i.q}` + (pr > 0 ? ` = ${money(pr * i.q)} ${c.currency}` : ' (السعر عند التواصل)'));
+        lines.push(`*${k + 1}) ${wa(p.name)}*`);
+        if (i.o) lines.push(`   الخيار: ${wa(i.o)}`);
+        if (i.c) lines.push(`   اللون: ${wa(i.c)}`);
+        lines.push(pr > 0 ? `   ${money(pr)} ${cu} × ${i.q} = ${money(pr * i.q)} ${cu}` : `   الكمية: ${i.q} (السعر عند التواصل)`);
       });
-      lines.push('');
-      if (s.sum > 0) lines.push(`*الإجمالي:* ${money(s.sum)} ${c.currency}` + (s.unpriced ? ' (+ منتجات سعرها عند التواصل)' : ''));
-      lines.push('', `*الاسم:* ${wa(name)}`, `*رقم تاني للتواصل:* ${wa(phone)}`);
-      if (address) lines.push(`*العنوان:* ${wa(address)}`);
+      lines.push(line);
+      lines.push(`*إجمالي المنتجات:* ${s.sum > 0 ? money(s.sum) + ' ' + cu : 'عند التواصل'}`);
+      if (m === 'delivery') lines.push(`*مصاريف الشحن:* ${sh.state === 'fee' ? money(sh.fee) + ' ' + cu : sh.state === 'free' ? 'مجاني' : 'تتحدد بعد التواصل'}`);
+      lines.push(`*الإجمالي الكلي:* ${s.sum + sh.fee > 0 ? money(s.sum + sh.fee) + ' ' + cu : 'عند التواصل'}` + (s.unpriced ? ' (+ منتجات سعرها عند التواصل)' : ''));
+      lines.push(line);
+      lines.push(`*طريقة الاستلام:* ${m === 'pickup' ? 'استلام من المحل' : 'توصيل'}`);
+      if (m === 'delivery') { lines.push(`*المحافظة:* ${wa(gov)}`); lines.push(`*العنوان:* ${wa(address)}`); }
+      lines.push(`*الاسم:* ${wa(name)}`, `*رقم تاني للتواصل:* ${wa(phone)}`);
       if (note) lines.push(`*ملاحظات:* ${wa(note)}`);
       if (MK.lang() === 'en') lines.push('', '(Customer browsed in English)');
-      if (c.order_footer) lines.push('', wa(c.order_footer));
+      if (c.order_footer) lines.push(line, wa(c.order_footer));
       return lines.join('\n');
     }
 
@@ -353,10 +414,12 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       const name = fName.value.trim().slice(0, 60);
       const phone = fPhone.value.trim().slice(0, 20);
       const address = needAddr() ? fAddr.value.trim().slice(0, 200) : '';
+      const gov = needAddr() ? fGov.value : '';
+      if (!method()) { MK.toast(t('noMethod')); return; }
       const note = fNote.value.trim().slice(0, 300);
       if (!cart.length) return;
-      try { localStorage.setItem(CUST_KEY, JSON.stringify({ name, phone, address })); } catch (_) { }
-      const url = `https://wa.me/${num}?text=${encodeURIComponent(buildMessage(name, phone, address, note))}`;
+      try { localStorage.setItem(CUST_KEY, JSON.stringify({ name, phone, address: address || (JSON.parse(localStorage.getItem(CUST_KEY) || '{}').address || ''), gov: gov || (JSON.parse(localStorage.getItem(CUST_KEY) || '{}').gov || ''), method: method() })); } catch (_) { }
+      const url = `https://wa.me/${num}?text=${encodeURIComponent(buildMessage(name, phone, address, note, gov))}`;
       const w = window.open(url, '_blank');
       if (w) w.opener = null; else location.href = url;
       MK.toast(t('waOpened'), 4200);
