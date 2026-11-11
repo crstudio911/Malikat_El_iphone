@@ -14,9 +14,9 @@
       skip: 'تخطّى للمحتوى', home: 'الرئيسية', shop: 'المتجر', langBtn: 'English', langAria: 'Switch to English',
       themeDark: 'التبديل للثيم الغامق', themeLight: 'التبديل للثيم الفاتح', menu: 'القائمة',
       footAbout: 'موبايلات أصلية وجرابات فاخرة بأحسن سعر، والطلب كله على واتساب.',
-      footLinks: 'روابط', footVisit: 'زورنا', footFollow: 'تابعنا', rights: 'كل الحقوق محفوظة',
+      footLinks: 'روابط', footVisit: 'زورنا', footFollow: 'تابعنا', rights: 'كل الحقوق محفوظة', madeBy: 'برمج و صمم هذا الموقع بواسطة',
       fb: 'فيسبوك', ig: 'إنستجرام', tt: 'تيك توك', wa: 'واتساب', defName: 'ملكة الأيفون',
-      heroEyebrow: 'متجر آيفون وإكسسوارات', heroL1: 'آيفون', heroL2: 'بلمسة', heroL3: 'ملكية.',
+      heroEyebrow: 'متجر آيفون وإكسسوارات', heroL1: 'موبايلك.', heroL2: 'جرابك.', heroL3: 'ستايلك.',
       heroSub: 'موبايلات أصلية بضمان، وجرابات تحمي وتجمّل. اختار اللي يعجبك واطلب على واتساب في ثواني.',
       ctaShop: 'ادخل المتجر', ctaMore: 'اكتشف أكتر',
       st1: 'أصلي', st1s: 'كل الأجهزة', st2: 'ضمان', st2s: 'على كل جهاز', st3: '48 ساعة', st3s: 'شحن للمحافظات',
@@ -44,7 +44,7 @@
       added: 'اتضاف للطلب', full: 'السلة وصلت للحد الأقصى', viewCart: 'عرض الطلب', del: 'حذف',
       pdHead: 'تفاصيل المنتج', close: 'إغلاق', cartHead: 'طلبك', total: 'الإجمالي',
       unpriced: 'في منتجات سعرها عند التواصل ومش داخلة في الإجمالي.',
-      fName: 'الاسم', fNameErr: 'اكتب اسمك عشان نعرف نكلمك.', fAddr: 'العنوان', fNote: 'ملاحظات (اختياري)',
+      fName: 'الاسم', fNameErr: 'اكتب اسمك عشان نعرف نكلمك.', fAddr: 'العنوان', fAddrErr: 'اكتب عنوانك بالتفصيل.', fPhone: 'رقم موبايل تاني للتواصل', fPhoneHint: 'رقم غير رقم الواتساب اللي هتبعت منه، عشان لو مقدرناش نوصلك.', fPhoneErr: 'اكتب رقم موبايل صحيح.', reqHint: 'الحقول اللي عليها * لازم تتملى.', fixForm: 'كمّل البيانات المطلوبة الأول.', annTag: 'إعلان', annOk: 'تمام', annShop: 'تسوق دلوقتي', annClose: 'إغلاق', waFloat: 'كلمنا على واتساب', caseEyebrow: 'جرابك مش لاقيه؟', caseTitle: 'قولنا موبايلك، ونجيبلك جرابه.', caseSub: 'لو الجراب اللي عايزه مش موجود في المتجر، اكتب نوع موبايلك وابعتلنا على واتساب ونوفرهولك.', caseModel: 'نوع الموبايل', caseModelPh: 'مثلاً: iPhone 15 Pro Max', caseDesc: 'شكل الجراب (اختياري)', caseDescPh: 'اللون، الخامة، أو أي تفاصيل', caseSend: 'ابعت طلب الجراب', caseErr: 'اكتب نوع موبايلك الأول.', fNote: 'ملاحظات (اختياري)',
       send: 'إرسال الطلب على واتساب', clear: 'تفريغ السلة', cleared: 'اتفرّغت السلة',
       noWa: 'الطلب مش متاح دلوقتي، كلمنا من صفحاتنا.', waOpened: 'اتفتح واتساب، اضغط إرسال عشان الطلب يوصلنا',
       cart: 'السلة', pageFail: 'حصلت مشكلة، حاول تاني.'
@@ -53,9 +53,9 @@
       skip: 'Skip to content', home: 'Home', shop: 'Shop', langBtn: 'عربي', langAria: 'التبديل للعربي',
       themeDark: 'Switch to dark theme', themeLight: 'Switch to light theme', menu: 'Menu',
       footAbout: 'Genuine iPhones and premium cases at the best price, ordered straight through WhatsApp.',
-      footLinks: 'Links', footVisit: 'Visit us', footFollow: 'Follow us', rights: 'All rights reserved',
+      footLinks: 'Links', footVisit: 'Visit us', footFollow: 'Follow us', rights: 'All rights reserved', madeBy: 'Designed & developed by',
       fb: 'Facebook', ig: 'Instagram', tt: 'TikTok', wa: 'WhatsApp', defName: 'iPhone Queen',
-      heroEyebrow: 'iPhone & accessories store', heroL1: 'iPhone,', heroL2: 'the royal', heroL3: 'way.',
+      heroEyebrow: 'iPhone & accessories store', heroL1: 'Your phone.', heroL2: 'Your case.', heroL3: 'Your style.',
       heroSub: 'Genuine phones with warranty and cases that protect in style. Pick what you love and order on WhatsApp in seconds.',
       ctaShop: 'Enter the shop', ctaMore: 'Discover more',
       st1: 'Genuine', st1s: 'Every device', st2: 'Warranty', st2s: 'On every phone', st3: '48 hours', st3s: 'Nationwide shipping',
@@ -83,7 +83,7 @@
       added: 'Added to your order', full: 'Your cart is full', viewCart: 'View order', del: 'Remove',
       pdHead: 'Product details', close: 'Close', cartHead: 'Your order', total: 'Total',
       unpriced: 'Some items are priced on request and are not included in the total.',
-      fName: 'Name', fNameErr: 'Please enter your name so we can reach you.', fAddr: 'Address', fNote: 'Notes (optional)',
+      fName: 'Name', fNameErr: 'Please enter your name so we can reach you.', fAddr: 'Address', fAddrErr: 'Please enter your full address.', fPhone: 'Another phone number', fPhoneHint: 'A number other than the WhatsApp one you order from, in case we cannot reach you.', fPhoneErr: 'Please enter a valid phone number.', reqHint: 'Fields marked * are required.', fixForm: 'Please complete the required details first.', annTag: 'Announcement', annOk: 'Got it', annShop: 'Shop now', annClose: 'Close', waFloat: 'Chat on WhatsApp', caseEyebrow: 'Can’t find your case?', caseTitle: 'Tell us your phone. We’ll get the case.', caseSub: 'If the case you want isn’t in the shop, type your phone model and message us on WhatsApp. We’ll source it for you.', caseModel: 'Phone model', caseModelPh: 'e.g. iPhone 15 Pro Max', caseDesc: 'Case details (optional)', caseDescPh: 'Color, material or any details', caseSend: 'Send case request', caseErr: 'Please enter your phone model first.', fNote: 'Notes (optional)',
       send: 'Send order on WhatsApp', clear: 'Empty cart', cleared: 'Cart emptied',
       noWa: 'Ordering is not available right now, reach us on our pages.', waOpened: 'WhatsApp opened, tap send so your order reaches us',
       cart: 'Cart', pageFail: 'Something went wrong, please try again.'
@@ -236,16 +236,74 @@
     const num = String(c.whatsapp_number || '').replace(/\D/g, '');
     if (num.length >= 8) links.push(['whatsapp', 'https://wa.me/' + num, t('wa')]);
     const hours = MK.cfgL('open_hours'), addr = MK.cfgL('address');
+    const tel = String(c.phone || '').replace(/[^\d+]/g, '').slice(0, 16);
     f.innerHTML = `<div class="wrap foot-grid">
   <div class="foot-brand">
     <a class="brand" href="index.html"><img class="brand-logo" src="img/logo.webp" width="44" height="44" alt="" decoding="async" loading="lazy"><span class="brand-name">${esc(MK.cfgL('store_name'))}</span></a>
     <p class="foot-about">${esc(t('footAbout'))}</p>
   </div>
   <nav class="foot-col" aria-label="${esc(t('footLinks'))}"><h2>${esc(t('footLinks'))}</h2><a href="index.html">${esc(t('home'))}</a><a href="main.html">${esc(t('shop'))}</a></nav>
-  ${hours || addr ? `<div class="foot-col"><h2>${esc(t('footVisit'))}</h2>${hours ? `<p class="foot-line"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>${esc(hours)}</span></p>` : ''}${addr ? `<p class="foot-line"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>${esc(addr)}</span></p>` : ''}</div>` : ''}
+  ${hours || addr || tel ? `<div class="foot-col"><h2>${esc(t('footVisit'))}</h2>${tel.length >= 6 ? `<a class="foot-line" href="tel:${esc(tel)}"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg><span dir="ltr">${esc(c.phone)}</span></a>` : ''}${hours ? `<p class="foot-line"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>${esc(hours)}</span></p>` : ''}${addr ? `<p class="foot-line"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>${esc(addr)}</span></p>` : ''}</div>` : ''}
   ${links.length ? `<div class="foot-col"><h2>${esc(t('footFollow'))}</h2><div class="social">${links.map(([k, u, l]) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(l)}">${ICON[k]}</a>`).join('')}</div></div>` : ''}
 </div>
-<div class="wrap foot-bottom"><span>© ${new Date().getFullYear()} ${esc(MK.cfgL('store_name'))}</span><span>${esc(t('rights'))}</span></div>`;
+<div class="wrap foot-bottom"><span>© ${new Date().getFullYear()} ${esc(MK.cfgL('store_name'))}</span><span>${esc(t('rights'))}</span><span class="made">${esc(t('madeBy'))} <a class="mc" href="https://crstudio911.github.io/MC" target="_blank" rel="noopener noreferrer">MC</a></span></div>`;
+  }
+
+  MK.waNum = () => {
+    let n = String(MK.cfg().whatsapp_number || '').replace(/\D/g, '').replace(/^00/, '');
+    if (/^0\d{10}$/.test(n)) n = '20' + n.slice(1);
+    return n.length >= 8 && n.length <= 15 ? n : '';
+  };
+  MK.openWa = text => {
+    const n = MK.waNum(); if (!n) { MK.toast(MK.t('noWa')); return false; }
+    const url = 'https://wa.me/' + n + (text ? '?text=' + encodeURIComponent(text) : '');
+    const w = window.open(url, '_blank');
+    if (w) w.opener = null; else location.href = url;
+    return true;
+  };
+
+  function renderFloat() {
+    let a = $('#waFloat');
+    const n = MK.waNum();
+    if (!n) { if (a) a.remove(); return; }
+    if (!a) {
+      a = document.createElement('a'); a.id = 'waFloat'; a.className = 'wa-float';
+      a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.innerHTML = ICON.whatsapp.replace(/width="18" height="18"/, 'width="30" height="30"') + '<span class="wa-tip"></span>';
+      document.body.appendChild(a);
+    }
+    a.href = 'https://wa.me/' + n;
+    a.setAttribute('aria-label', MK.t('waFloat'));
+    a.querySelector('.wa-tip').textContent = MK.t('waFloat');
+  }
+
+  function renderCaseReq() {
+    const box = $('#caseReq'); if (!box) return;
+    const t = MK.t;
+    const keep = { m: ($('#crModel', box) || {}).value || '', d: ($('#crDesc', box) || {}).value || '' };
+    box.innerHTML = `<div class="cr-box rv in">
+  <div class="cr-copy">
+    <p class="eyebrow"><span class="dot"></span><span>${esc(t('caseEyebrow'))}</span></p>
+    <h2 class="sec-title" id="caseTitle">${esc(t('caseTitle'))}</h2>
+    <p class="sec-sub">${esc(t('caseSub'))}</p>
+  </div>
+  <form class="cr-form" novalidate>
+    <label><span>${esc(t('caseModel'))} <b class="star" aria-hidden="true">*</b></span><input id="crModel" type="text" maxlength="60" required aria-required="true" autocomplete="off" placeholder="${esc(t('caseModelPh'))}"><span class="err" hidden>${esc(t('caseErr'))}</span></label>
+    <label><span>${esc(t('caseDesc'))}</span><input id="crDesc" type="text" maxlength="150" autocomplete="off" placeholder="${esc(t('caseDescPh'))}"></label>
+    <button class="btn btn-main" type="submit">${ICON.whatsapp.replace(/width="18" height="18"/, 'width="20" height="20"')}<span>${esc(t('caseSend'))}</span></button>
+  </form>
+</div>`;
+    const m = $('#crModel', box), d = $('#crDesc', box), err = $('.err', box);
+    m.value = keep.m; d.value = keep.d;
+    m.addEventListener('input', () => { err.hidden = true; m.classList.remove('bad'); });
+    $('form', box).addEventListener('submit', e => {
+      e.preventDefault();
+      const model = m.value.replace(/\s+/g, ' ').trim(), desc = d.value.replace(/\s+/g, ' ').trim();
+      if (!model) { err.hidden = false; m.classList.add('bad'); m.focus(); return; }
+      const lines = ['السلام عليكم، عايز جراب مش لاقيه في المتجر.', '', '*نوع الموبايل:* ' + model];
+      if (desc) lines.push('*شكل الجراب:* ' + desc);
+      if (MK.openWa(lines.join('\n'))) MK.toast(t('waOpened'), 4200);
+    });
   }
 
   function applyConfig() {
@@ -261,7 +319,34 @@
     }
     const base = document.body.dataset.page === 'main' ? MK.t('shop') + ' | ' : '';
     document.title = base + name + (tag && !base ? ' | ' + tag : '');
-    renderFooter();
+    renderFooter(); renderFloat(); renderCaseReq(); renderPopup();
+  }
+
+  const hashStr = x => { let h = 5381; for (let i = 0; i < x.length; i++) h = (h * 33 + x.charCodeAt(i)) | 0; return String(h >>> 0); };
+  function renderPopup() {
+    if (!MK.data || MK.cfg().orders_enabled === false) return;
+    const raw = String(MK.cfg().announcement || '').trim(); if (!raw) return;
+    const key = hashStr(raw);
+    let seen = ''; try { seen = localStorage.getItem('mk_ann') || ''; } catch (_) { }
+    if (seen === key || $('#annPop')) return;
+    const lines = MK.cfgL('announcement').split(/\n+/).map(x => x.trim()).filter(Boolean);
+    const d = document.createElement('dialog');
+    d.id = 'annPop'; d.className = 'ann-pop'; d.setAttribute('aria-labelledby', 'annH');
+    const t = MK.t, shop = document.body.dataset.page !== 'main';
+    d.innerHTML = `<button class="ann-x" type="button" aria-label="${esc(t('annClose'))}"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+<span class="ann-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></span>
+<p class="ann-tag">${esc(t('annTag'))}</p>
+<h2 id="annH">${esc(lines[0])}</h2>
+${lines.slice(1).map(l => `<p class="ann-p">${esc(l)}</p>`).join('')}
+<div class="ann-acts">${shop ? `<a class="btn btn-main" href="main.html">${esc(t('annShop'))}</a>` : ''}<button class="btn btn-ghost ann-ok" type="button">${esc(t('annOk'))}</button></div>`;
+    document.body.appendChild(d);
+    const close = () => { try { localStorage.setItem('mk_ann', key); } catch (_) { } d.classList.add('out'); setTimeout(() => { d.close(); d.remove(); }, 220); };
+    d.querySelector('.ann-x').addEventListener('click', close);
+    d.querySelector('.ann-ok').addEventListener('click', close);
+    const a = d.querySelector('a'); if (a) a.addEventListener('click', () => { try { localStorage.setItem('mk_ann', key); } catch (_) { } });
+    d.addEventListener('cancel', e => { e.preventDefault(); close(); });
+    d.addEventListener('click', e => { if (e.target === d) close(); });
+    setTimeout(() => { if (d.isConnected && typeof d.showModal === 'function') d.showModal(); }, 900);
   }
 
   function boot() {

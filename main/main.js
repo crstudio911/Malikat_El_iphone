@@ -9,6 +9,7 @@
     const pd = $('#pd'), pdBody = $('#pdBody'), pdFoot = $('#pdFoot');
     const cartDlg = $('#cart'), linesEl = $('#cartLines'), totalEl = $('#cartTotal'), noteEl = $('#cartNote');
     const fName = $('#fName'), fAddr = $('#fAddr'), fNote = $('#fNote'), fNameErr = $('#fNameErr');
+    const fPhone = $('#fPhone'), fPhoneErr = $('#fPhoneErr'), fAddrErr = $('#fAddrErr');
 
     const LOGO = 'img/logo.webp';
     const CART_KEY = 'mk_cart_v1', CUST_KEY = 'mk_customer_v1';
@@ -43,6 +44,11 @@
     const ICON_BAG = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>';
     const catIcon = n => /جراب|كفر|case/i.test(n) ? ICON_CASE : /تليفون|موبايل|هاتف|هواتف|ايفون|أيفون|آيفون|phone/i.test(n) ? ICON_PHONE : ICON_TAG;
 
+    const imgsOf = p => (Array.isArray(p.images) && p.images.length ? p.images : (p.image ? [p.image] : []));
+    function pdImg(p) {
+      const u = imgsOf(p)[pdState.i || 0];
+      return u ? `<img src="${esc(u)}" alt="${esc(nameOf(p))}" width="400" height="400" decoding="async" referrerpolicy="no-referrer">` : imgTag(p, true);
+    }
     function imgTag(p, eager) {
       if (!p.image) return `<img class="ph" src="${LOGO}" alt="" width="120" height="120" decoding="async">`;
       return `<img src="${esc(p.image)}" alt="${esc(nameOf(p))}" width="400" height="400" ${eager ? '' : 'loading="lazy" '}decoding="async" referrerpolicy="no-referrer">`;
@@ -98,6 +104,7 @@
     function renderBar(bump) {
       const s = totals();
       bar.hidden = s.n === 0;
+      document.body.classList.toggle('has-bar', !bar.hidden);
       if (!s.n) return;
       barBtn.innerHTML = `<span class="cb-l">${ICON_BAG}<span>${esc(t('viewCart'))}</span></span><span class="cb-r"><span class="tot">${s.sum > 0 ? money(s.sum) + ' ' + cur() : ''}</span><span class="n">${s.n}</span></span>`;
       if (bump) { barBtn.classList.remove('bump'); void barBtn.offsetWidth; barBtn.classList.add('bump'); }
@@ -115,7 +122,7 @@
     function cardHTML(p, i) {
       const out = !p.in_stock, closed = !ordersOpen();
       const label = out ? t('out') : closed ? t('closedBtn') : needsPick(p) ? t('pick') : t('add');
-      return `<article class="card" data-id="${esc(p.id)}" style="--dl:${Math.min(i, 8) * .05}s">
+      return `<article class="card" data-id="${esc(p.id)}">
   <button class="card-hit" type="button" aria-label="${esc(t('details'))} ${esc(nameOf(p))}">
     <div class="media">${imgTag(p, i < 4)}${badgeHTML(p)}</div>
     <div class="info">
@@ -140,7 +147,7 @@
       catsEl.hidden = cats.length < 2;
       if (cats.length < 2) return;
       const mk = (val, text) => `<button class="chip" type="button" data-cat="${esc(val)}" aria-pressed="${cat === val}">${text}</button>`;
-      catsEl.innerHTML = mk('all', esc(t('all'))) + cats.map(c => mk(c.name, catIcon(c.name + ' ' + (c.en || '')) + esc(MK.catL(c.name)))).join('');
+      catsEl.innerHTML = mk('all', esc(t('all'))) + cats.map(c => mk(c.name, (c.image ? `<img class="chip-img" src="${esc(c.image)}" alt="" width="26" height="26" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : catIcon(c.name + ' ' + (c.en || ''))) + esc(MK.catL(c.name)))).join('');
     }
 
     function renderShop() {
@@ -167,6 +174,7 @@
       } else {
         shop.innerHTML = grid(list);
       }
+      shop.querySelectorAll('.card').forEach((c, i) => c.style.setProperty('--dl', Math.min(i, 8) * .05 + 's'));
     }
 
     function indexSearch(d) {
@@ -206,7 +214,8 @@
       const out = !p.in_stock, closed = !ordersOpen();
       const desc = MK.L(p, 'description');
       pdBody.innerHTML = `
-<div class="pd-media media">${imgTag(p, true)}${badgeHTML(p)}</div>
+<div class="pd-media media">${pdImg(p)}${badgeHTML(p)}</div>
+${imgsOf(p).length > 1 ? `<div class="pd-thumbs">${imgsOf(p).map((u, i) => `<button type="button" class="pd-th" data-img="${i}" aria-pressed="${i === (pdState.i || 0)}" aria-label="${i + 1}"><img src="${esc(u)}" alt="" width="64" height="64" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join('')}</div>` : ''}
 <div>
   ${p.brand ? `<p class="brand-s">${esc(p.brand)}</p>` : ''}
   <h3 class="pd-title">${esc(nameOf(p))}</h3>
@@ -235,7 +244,8 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
 
     pd.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b || !pdState) return;
-      if (b.dataset.opt != null) { pdState.o = b.dataset.opt; renderPD(); }
+      if (b.dataset.img != null) { pdState.i = Number(b.dataset.img) || 0; renderPD(); }
+      else if (b.dataset.opt != null) { pdState.o = b.dataset.opt; renderPD(); }
       else if (b.dataset.color != null) { pdState.c = b.dataset.color; renderPD(); }
       else if (b.dataset.q) { pdState.q = Math.max(1, Math.min(MAX_QTY, pdState.q + Number(b.dataset.q))); renderPD(); }
       else if (b.id === 'pdAdd') {
@@ -267,7 +277,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       noteEl.hidden = !s.unpriced;
       noteEl.textContent = s.unpriced ? t('unpriced') : '';
       $('#fAddrWrap').hidden = cfg().ask_address === false;
-      $('#sendOrder').disabled = !ordersOpen();
+      syncSend();
     }
 
     function openCart() {
@@ -275,9 +285,10 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
         const c = JSON.parse(localStorage.getItem(CUST_KEY) || '{}');
         if (!fName.value && c.name) fName.value = String(c.name).slice(0, 60);
         if (!fAddr.value && c.address) fAddr.value = String(c.address).slice(0, 200);
+        if (!fPhone.value && c.phone) fPhone.value = String(c.phone).slice(0, 20);
       } catch (_) { }
-      fNameErr.hidden = true; fName.classList.remove('bad');
-      renderCart();
+      [[fName, fNameErr], [fPhone, fPhoneErr], [fAddr, fAddrErr]].forEach(([i, e]) => { e.hidden = true; i.classList.remove('bad'); });
+      renderCart(); syncSend();
       if (cart.length) MK.open(cartDlg);
     }
 
@@ -293,13 +304,27 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
     $('#clearCart').addEventListener('click', () => { cart = []; saveCart(); renderBar(); cartDlg.close(); MK.toast(t('cleared')); });
     const wa = s => String(s == null ? '' : s).replace(/[*_~`]/g, '').replace(/\s+/g, ' ').trim();
 
+    const needAddr = () => cfg().ask_address !== false;
+    const phoneOk = v => { const d = v.replace(/[\s\-()+]/g, ''); return /^\d{8,15}$/.test(d); };
+    const checks = () => [
+      [fName, fNameErr, fName.value.trim().length >= 2],
+      [fPhone, fPhoneErr, phoneOk(fPhone.value.trim())],
+      [fAddr, fAddrErr, !needAddr() || fAddr.value.trim().length >= 5]
+    ];
+    function syncSend() {
+      const ok = checks().every(c => c[2]);
+      const btn = $('#sendOrder');
+      btn.disabled = !ordersOpen() || !cart.length;
+      btn.classList.toggle('not-ready', !ok);
+    }
+
     function waNumber() {
       let n = String(cfg().whatsapp_number || '').replace(/\D/g, '').replace(/^00/, '');
       if (/^0\d{10}$/.test(n)) n = '20' + n.slice(1);
       return n.length >= 8 && n.length <= 15 ? n : '';
     }
 
-    function buildMessage(name, address, note) {
+    function buildMessage(name, phone, address, note) {
       const c = cfg(); const s = totals(); const lines = [];
       if (c.order_header) lines.push(wa(c.order_header), '');
       lines.push('*الطلب:*');
@@ -310,7 +335,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       });
       lines.push('');
       if (s.sum > 0) lines.push(`*الإجمالي:* ${money(s.sum)} ${c.currency}` + (s.unpriced ? ' (+ منتجات سعرها عند التواصل)' : ''));
-      lines.push('', `*الاسم:* ${wa(name)}`);
+      lines.push('', `*الاسم:* ${wa(name)}`, `*رقم تاني للتواصل:* ${wa(phone)}`);
       if (address) lines.push(`*العنوان:* ${wa(address)}`);
       if (note) lines.push(`*ملاحظات:* ${wa(note)}`);
       if (MK.lang() === 'en') lines.push('', '(Customer browsed in English)');
@@ -322,19 +347,21 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       if (!ordersOpen()) { MK.toast(MK.cfgL('closed_message')); return; }
       const num = waNumber();
       if (!num) { MK.toast(t('noWa')); return; }
+      const bad = checks().filter(c => !c[2]);
+      checks().forEach(([i, e, ok]) => { e.hidden = ok; i.classList.toggle('bad', !ok); });
+      if (bad.length) { bad[0][0].focus(); MK.toast(t('fixForm')); return; }
       const name = fName.value.trim().slice(0, 60);
-      if (!name) { fNameErr.hidden = false; fName.classList.add('bad'); fName.focus(); return; }
-      fNameErr.hidden = true; fName.classList.remove('bad');
-      const address = cfg().ask_address === false ? '' : fAddr.value.trim().slice(0, 200);
+      const phone = fPhone.value.trim().slice(0, 20);
+      const address = needAddr() ? fAddr.value.trim().slice(0, 200) : '';
       const note = fNote.value.trim().slice(0, 300);
       if (!cart.length) return;
-      try { localStorage.setItem(CUST_KEY, JSON.stringify({ name, address })); } catch (_) { }
-      const url = `https://wa.me/${num}?text=${encodeURIComponent(buildMessage(name, address, note))}`;
+      try { localStorage.setItem(CUST_KEY, JSON.stringify({ name, phone, address })); } catch (_) { }
+      const url = `https://wa.me/${num}?text=${encodeURIComponent(buildMessage(name, phone, address, note))}`;
       const w = window.open(url, '_blank');
       if (w) w.opener = null; else location.href = url;
       MK.toast(t('waOpened'), 4200);
     });
-    fName.addEventListener('input', () => { fNameErr.hidden = true; fName.classList.remove('bad'); });
+    [[fName, fNameErr], [fPhone, fPhoneErr], [fAddr, fAddrErr]].forEach(([i, e]) => i.addEventListener('input', () => { e.hidden = true; i.classList.remove('bad'); syncSend(); }));
 
     let qTimer;
     q.addEventListener('input', () => {

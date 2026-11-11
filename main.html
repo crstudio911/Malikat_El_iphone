@@ -20,10 +20,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Reem+Kufi:wght@500;600;700&family=Unbounded:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="one.css">
+<link rel="stylesheet" href="core/one.css">
 <link rel="stylesheet" href="main/main.css">
-<script src="config.js" defer></script>
-<script src="one.js" defer></script>
+<script src="core/config.js" defer></script>
+<script src="core/one.js" defer></script>
 <script src="main/main.js" defer></script>
 </head>
 <body data-page="main">
@@ -75,6 +75,8 @@
     </div>
   </div>
 
+  <section class="case-req wrap" id="caseReq" aria-labelledby="caseTitle"></section>
+
   <div class="cartbar" id="cartbar" hidden><button type="button" id="cartOpen" aria-haspopup="dialog"></button></div>
 
   <dialog class="sheet" id="pd" aria-labelledby="pdHead">
@@ -90,12 +92,19 @@
       <div class="total"><span data-t="total">الإجمالي</span><span class="v" id="cartTotal"></span></div>
       <p class="note-s" id="cartNote" hidden></p>
       <form class="form" id="orderForm" novalidate>
-        <label><span data-t="fName">الاسم</span>
-          <input id="fName" name="name" type="text" autocomplete="name" maxlength="60" required>
+        <p class="req-hint" data-t="reqHint">الحقول اللي عليها * لازم تتملى.</p>
+        <label><span><span data-t="fName">الاسم</span> <b class="star" aria-hidden="true">*</b></span>
+          <input id="fName" name="name" type="text" autocomplete="name" maxlength="60" required aria-required="true">
           <span class="err" id="fNameErr" data-t="fNameErr" hidden>اكتب اسمك عشان نعرف نكلمك.</span>
         </label>
-        <label id="fAddrWrap"><span data-t="fAddr">العنوان</span>
-          <input id="fAddr" name="address" type="text" autocomplete="street-address" maxlength="200">
+        <label><span><span data-t="fPhone">رقم موبايل تاني للتواصل</span> <b class="star" aria-hidden="true">*</b></span>
+          <input id="fPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" dir="ltr" placeholder="01xxxxxxxxx" required aria-required="true">
+          <span class="hint" data-t="fPhoneHint">رقم غير رقم الواتساب اللي هتبعت منه، عشان لو مقدرناش نوصلك.</span>
+          <span class="err" id="fPhoneErr" data-t="fPhoneErr" hidden>اكتب رقم موبايل صحيح.</span>
+        </label>
+        <label id="fAddrWrap"><span><span data-t="fAddr">العنوان</span> <b class="star" aria-hidden="true">*</b></span>
+          <input id="fAddr" name="address" type="text" autocomplete="street-address" maxlength="200" required aria-required="true">
+          <span class="err" id="fAddrErr" data-t="fAddrErr" hidden>اكتب عنوانك بالتفصيل.</span>
         </label>
         <label><span data-t="fNote">ملاحظات (اختياري)</span>
           <textarea id="fNote" name="note" maxlength="300"></textarea>
