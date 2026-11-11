@@ -248,3 +248,9 @@ dialog.sheet{border-radius:var(--r-l) var(--r-l) 0 0}
 .sums .total{padding-top:8px;border-top:1px dashed var(--line)}
 .chip-ic{margin-inline-end:8px;flex:none;color:var(--brand)}
 .chip[aria-pressed="true"] .chip-ic{color:inherit}
+.media img:not(.ph){position:static;inset:auto;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;border-radius:18px;align-self:center;justify-self:center}
+.media{overflow:hidden}
+.pd-media.media{display:grid;place-items:center;height:min(52vh,420px);aspect-ratio:auto}
+.pd-media.media img:not(.ph){max-height:100%;border-radius:20px}
+.pd-th img{border-radius:10px}
+.price s,.pd-price s{text-decoration:line-through;text-decoration-thickness:2px;text-decoration-color:color-mix(in srgb,var(--brand) 75%,var(--ink-2));opacity:.85;font-weight:500}

@@ -117,7 +117,7 @@
       if (!price) return `<span class="ask">${esc(t('ask'))}</span>`;
       const range = hasRange(p);
       return `${range ? `<span class="from">${esc(t('from'))}</span>` : ''}<b>${money(price)}</b><span class="cur">${cur()}</span>` +
-        (!range && p.old_price > price ? `<s>${money(p.old_price)}</s>` : '');
+        (!range && p.old_price > price ? `<s>${money(p.old_price)} ${cur()}</s>` : '');
     }
     const badgeHTML = p => !p.in_stock ? `<span class="badge out">${esc(t('outBadge'))}</span>` : p.badge ? `<span class="badge">${esc(MK.L(p, 'badge'))}</span>` : '';
 
@@ -223,7 +223,7 @@ ${imgsOf(p).length > 1 ? `<div class="pd-thumbs">${imgsOf(p).map((u, i) => `<but
   <h3 class="pd-title">${esc(nameOf(p))}</h3>
 </div>
 <p class="pd-price">${price > 0
-    ? `${money(price)} <span class="cur">${cur()}</span>${p.old_price > price && !(optOf(p, o) && optOf(p, o).p) ? `<s>${money(p.old_price)}</s>` : ''}`
+    ? `${money(price)} <span class="cur">${cur()}</span>${p.old_price > price && !(optOf(p, o) && optOf(p, o).p) ? `<s>${money(p.old_price)} ${cur()}</s>` : ''}`
     : `<span class="cur">${esc(t('ask'))}</span>`}</p>
 ${p.options.length > 1 ? `
 <div class="field"><span class="field-label" id="lbO">${esc(t('option'))}</span>
@@ -296,7 +296,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       if (method() !== 'delivery') return { fee: 0, state: 'none' };
       const g = shipList().find(x => x.name === fGov.value);
       if (!g) return { fee: 0, state: 'pick' };
-      if (!g.known) return { fee: 0, state: 'ask' };
+      if (!g.known) return { fee: 0, state: 'free' };
       return { fee: g.fee, state: g.fee > 0 ? 'fee' : 'free' };
     }
     function renderMethod() {
@@ -360,7 +360,7 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
     const phoneOk = v => { const d = v.replace(/[\s\-()+]/g, ''); return /^\d{8,15}$/.test(d); };
     const checks = () => [
       [fName, fNameErr, fName.value.trim().length >= 2],
-      [fPhone, fPhoneErr, phoneOk(fPhone.value.trim())],
+      [fPhone, fPhoneErr, !fPhone.value.trim() || phoneOk(fPhone.value.trim())],
       [fGov, fGovErr, !needAddr() || !!fGov.value],
       [fAddr, fAddrErr, !needAddr() || fAddr.value.trim().length >= 5]
     ];
@@ -377,30 +377,46 @@ ${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       return n.length >= 8 && n.length <= 15 ? n : '';
     }
 
+    function orderRef() {
+      const d = new Date(), z = n => String(n).padStart(2, '0');
+      const r = Math.random().toString(36).slice(2, 6).toUpperCase();
+      return `MK-${String(d.getFullYear()).slice(2)}${z(d.getMonth() + 1)}${z(d.getDate())}-${r}`;
+    }
     function buildMessage(name, phone, address, note, gov) {
       const c = cfg(); const s = totals(); const sh = shipNow(); const m = method(); const cu = c.currency || 'ج.م';
-      const line = '────────────', lines = [];
-      lines.push('*فاتورة طلب*');
-      if (c.order_header) lines.push(wa(c.order_header));
+      const d = new Date(), z = n => String(n).padStart(2, '0');
+      const line = '━━━━━━━━━━━━━━', lines = [];
+      const count = cart.reduce((a, i) => a + i.q, 0);
+      lines.push(`*فاتورة طلب | ${wa(c.store_name || 'ملكة الأيفون')}*`);
+      if (c.order_header) lines.push(`_${wa(c.order_header)}_`);
       lines.push(line);
+      lines.push(`*كود الطلب:* \`${orderRef()}\``);
+      lines.push(`*التاريخ:* ${z(d.getDate())}/${z(d.getMonth() + 1)}/${d.getFullYear()} - ${z(d.getHours())}:${z(d.getMinutes())}`);
+      lines.push(line);
+      lines.push('*الطلب:*');
       cart.forEach((i, k) => {
         const p = byId.get(i.id); const pr = priceFor(p, i.o);
-        lines.push(`*${k + 1}) ${wa(p.name)}*`);
-        if (i.o) lines.push(`   الخيار: ${wa(i.o)}`);
-        if (i.c) lines.push(`   اللون: ${wa(i.c)}`);
-        lines.push(pr > 0 ? `   ${money(pr)} ${cu} × ${i.q} = ${money(pr * i.q)} ${cu}` : `   الكمية: ${i.q} (السعر عند التواصل)`);
+        lines.push(`*${k + 1}.* ${wa(p.name)}`);
+        const ex = [i.o && `الاختيار: ${wa(i.o)}`, i.c && `اللون: ${wa(i.c)}`].filter(Boolean);
+        if (ex.length) lines.push(`    _${ex.join(' | ')}_`);
+        lines.push(pr > 0 ? `    ${i.q} × ${money(pr)} = *${money(pr * i.q)} ${cu}*` : `    الكمية: ${i.q} | _السعر عند التواصل_`);
       });
       lines.push(line);
+      lines.push(`*عدد المنتجات:* ${count}`);
       lines.push(`*إجمالي المنتجات:* ${s.sum > 0 ? money(s.sum) + ' ' + cu : 'عند التواصل'}`);
-      if (m === 'delivery') lines.push(`*مصاريف الشحن:* ${sh.state === 'fee' ? money(sh.fee) + ' ' + cu : sh.state === 'free' ? 'مجاني' : 'تتحدد بعد التواصل'}`);
-      lines.push(`*الإجمالي الكلي:* ${s.sum + sh.fee > 0 ? money(s.sum + sh.fee) + ' ' + cu : 'عند التواصل'}` + (s.unpriced ? ' (+ منتجات سعرها عند التواصل)' : ''));
+      if (m === 'delivery') lines.push(`*مصاريف الشحن:* ${sh.state === 'fee' ? money(sh.fee) + ' ' + cu : 'مجاني'}`);
+      lines.push(`*الإجمالي المطلوب:* *${s.sum + sh.fee > 0 ? money(s.sum + sh.fee) + ' ' + cu : 'عند التواصل'}*` + (s.unpriced ? ' _(+ منتجات سعرها عند التواصل)_' : ''));
       lines.push(line);
-      lines.push(`*طريقة الاستلام:* ${m === 'pickup' ? 'استلام من المحل' : 'توصيل'}`);
+      lines.push('*بيانات العميل:*');
+      lines.push(`*الاسم:* ${wa(name)}`);
+      if (phone) lines.push(`*رقم تاني للتواصل:* ${wa(phone)}`);
+      lines.push(`*طريقة الاستلام:* ${m === 'pickup' ? 'استلام من المحل' : 'توصيل للبيت'}`);
       if (m === 'delivery') { lines.push(`*المحافظة:* ${wa(gov)}`); lines.push(`*العنوان:* ${wa(address)}`); }
-      lines.push(`*الاسم:* ${wa(name)}`, `*رقم تاني للتواصل:* ${wa(phone)}`);
-      if (note) lines.push(`*ملاحظات:* ${wa(note)}`);
-      if (MK.lang() === 'en') lines.push('', '(Customer browsed in English)');
-      if (c.order_footer) lines.push(line, wa(c.order_footer));
+      else if (c.address) lines.push(`*عنوان المحل:* ${wa(c.address)}`);
+      if (note) lines.push(`*ملاحظات:* _${wa(note)}_`);
+      if (MK.lang() === 'en') lines.push('_(Customer browsed in English)_');
+      lines.push(line);
+      if (c.order_footer) lines.push(`_${wa(c.order_footer)}_`);
       return lines.join('\n');
     }
 
