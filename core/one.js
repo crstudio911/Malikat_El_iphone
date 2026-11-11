@@ -192,6 +192,9 @@
   }
 
   function setData(d) {
+    const arr = v => Array.isArray(v) ? v : [];
+    d.products = d.products.filter(p => p && typeof p === 'object' && p.id).map(p => Object.assign(p, { options: arr(p.options), colors: arr(p.colors), images: arr(p.images).length ? arr(p.images) : (p.image ? [p.image] : []), en: p.en && typeof p.en === 'object' ? p.en : {} }));
+    d.categories = d.categories.filter(c => c && typeof c === 'object' && c.name);
     MK.data = d; MK.status = 'ready';
     applyConfig();
     MK._subs.forEach(fn => fn(d));
