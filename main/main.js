@@ -2,13 +2,13 @@
   'use strict';
   const MK = window.MK;
 
-  MK.pages.main = function init(host) {
-    const { $, esc, money } = MK;
-    const q = $('#q', host), catsEl = $('#cats', host), shop = $('#shop', host), countEl = $('#count', host);
-    const bar = $('#cartbar', host), barBtn = $('#cartOpen', host);
-    const pd = $('#pd', host), pdBody = $('#pdBody', host), pdFoot = $('#pdFoot', host);
-    const cartDlg = $('#cart', host), linesEl = $('#cartLines', host), totalEl = $('#cartTotal', host), noteEl = $('#cartNote', host);
-    const fName = $('#fName', host), fAddr = $('#fAddr', host), fNote = $('#fNote', host), fNameErr = $('#fNameErr', host);
+  MK.pages.main = function init() {
+    const { $, esc, money, t } = MK;
+    const q = $('#q'), catsEl = $('#cats'), shop = $('#shop'), countEl = $('#count');
+    const bar = $('#cartbar'), barBtn = $('#cartOpen');
+    const pd = $('#pd'), pdBody = $('#pdBody'), pdFoot = $('#pdFoot');
+    const cartDlg = $('#cart'), linesEl = $('#cartLines'), totalEl = $('#cartTotal'), noteEl = $('#cartNote');
+    const fName = $('#fName'), fAddr = $('#fAddr'), fNote = $('#fNote'), fNameErr = $('#fNameErr');
 
     const LOGO = 'img/logo.webp';
     const CART_KEY = 'mk_cart_v1', CUST_KEY = 'mk_customer_v1';
@@ -18,11 +18,12 @@
     let byId = new Map();
     let cart = loadCart();
     let pdState = null;
+    let pendingOpen = (location.hash.match(/^#p=(.+)$/) || [])[1] || '';
 
     MK.initDialog(pd); MK.initDialog(cartDlg);
     const cfg = () => MK.cfg();
     const ordersOpen = () => cfg().orders_enabled !== false;
-    const cur = () => esc(cfg().currency);
+    const cur = () => esc(MK.cur());
 
     const norm = s => String(s == null ? '' : s).toLowerCase()
       .replace(/[\u064B-\u0652\u0640]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه')
@@ -34,22 +35,25 @@
     const fromPrice = p => { const a = allPrices(p); return a.length ? Math.min(...a) : 0; };
     const hasRange = p => new Set(allPrices(p)).size > 1;
     const needsPick = p => p.options.length > 1 || p.colors.length > 1;
+    const nameOf = p => MK.L(p, 'name');
 
     const ICON_PHONE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 5h3"/></svg>';
     const ICON_CASE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="5.5" y="2" width="13" height="20" rx="3.5"/><rect x="8" y="4.5" width="4.5" height="4.5" rx="1.2"/><circle cx="12" cy="14.5" r="2.6"/></svg>';
     const ICON_TAG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/></svg>';
+    const ICON_BAG = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg>';
     const catIcon = n => /جراب|كفر|case/i.test(n) ? ICON_CASE : /تليفون|موبايل|هاتف|هواتف|ايفون|أيفون|آيفون|phone/i.test(n) ? ICON_PHONE : ICON_TAG;
 
     function imgTag(p, eager) {
       if (!p.image) return `<img class="ph" src="${LOGO}" alt="" width="120" height="120" decoding="async">`;
-      return `<img src="${esc(p.image)}" alt="${esc(p.name)}" width="400" height="400" ${eager ? '' : 'loading="lazy" '}decoding="async" referrerpolicy="no-referrer">`;
+      return `<img src="${esc(p.image)}" alt="${esc(nameOf(p))}" width="400" height="400" ${eager ? '' : 'loading="lazy" '}decoding="async" referrerpolicy="no-referrer">`;
     }
-    host.addEventListener('error', e => {
-      const t = e.target;
-      if (t && t.tagName === 'IMG' && !t.classList.contains('ph')) {
-        t.classList.add('ph'); t.removeAttribute('loading'); t.alt = ''; t.src = LOGO;
+    document.addEventListener('error', e => {
+      const el = e.target;
+      if (el && el.tagName === 'IMG' && !el.classList.contains('ph') && el.closest('.media')) {
+        el.classList.add('ph'); el.removeAttribute('loading'); el.alt = ''; el.src = LOGO;
       }
     }, true);
+
     function loadCart() {
       try {
         const a = JSON.parse(localStorage.getItem(CART_KEY));
@@ -74,9 +78,9 @@
     function addToCart(p, o, c, qty) {
       const hit = cart.find(i => i.id === p.id && i.o === o && i.c === c);
       if (hit) hit.q = Math.min(MAX_QTY, hit.q + qty);
-      else if (cart.length >= MAX_LINES) { MK.toast('السلة وصلت للحد الأقصى'); return false; }
+      else if (cart.length >= MAX_LINES) { MK.toast(t('full')); return false; }
       else cart.push({ id: p.id, o, c, q: Math.min(MAX_QTY, qty) });
-      saveCart(); renderBar();
+      saveCart(); renderBar(true);
       return true;
     }
 
@@ -91,35 +95,36 @@
       return { n, sum, unpriced };
     }
 
-    function renderBar() {
-      const t = totals();
-      bar.hidden = t.n === 0;
-      if (!t.n) return;
-      barBtn.innerHTML = `<span class="n">${t.n}</span><span>عرض الطلب</span><span class="tot">${t.sum > 0 ? money(t.sum) + ' ' + cur() : ''}</span>`;
-    }
-    function priceHTML(p) {
-      const price = fromPrice(p);
-      if (!price) return '<span class="ask">السعر عند التواصل</span>';
-      const range = hasRange(p);
-      return `${range ? '<span class="from">من</span>' : ''}<b>${money(price)}</b><span class="cur">${cur()}</span>` +
-        (!range && p.old_price > price ? `<s>${money(p.old_price)}</s>` : '');
+    function renderBar(bump) {
+      const s = totals();
+      bar.hidden = s.n === 0;
+      if (!s.n) return;
+      barBtn.innerHTML = `<span class="cb-l">${ICON_BAG}<span>${esc(t('viewCart'))}</span></span><span class="cb-r"><span class="tot">${s.sum > 0 ? money(s.sum) + ' ' + cur() : ''}</span><span class="n">${s.n}</span></span>`;
+      if (bump) { barBtn.classList.remove('bump'); void barBtn.offsetWidth; barBtn.classList.add('bump'); }
     }
 
+    function priceHTML(p) {
+      const price = fromPrice(p);
+      if (!price) return `<span class="ask">${esc(t('ask'))}</span>`;
+      const range = hasRange(p);
+      return `${range ? `<span class="from">${esc(t('from'))}</span>` : ''}<b>${money(price)}</b><span class="cur">${cur()}</span>` +
+        (!range && p.old_price > price ? `<s>${money(p.old_price)}</s>` : '');
+    }
+    const badgeHTML = p => !p.in_stock ? `<span class="badge out">${esc(t('outBadge'))}</span>` : p.badge ? `<span class="badge">${esc(MK.L(p, 'badge'))}</span>` : '';
+
     function cardHTML(p, i) {
-      const out = !p.in_stock;
-      const closed = !ordersOpen();
-      const label = out ? 'غير متوفر' : closed ? 'الطلبات متوقفة' : needsPick(p) ? 'اختار وأضف' : 'أضف للطلب';
-      const badge = out ? '<span class="badge out">نفد</span>' : p.badge ? `<span class="badge">${esc(p.badge)}</span>` : '';
-      return `<article class="card" data-id="${esc(p.id)}">
-  <button class="card-hit" type="button" aria-label="تفاصيل ${esc(p.name)}">
-    <div class="media">${imgTag(p, i < 4)}${badge}</div>
+      const out = !p.in_stock, closed = !ordersOpen();
+      const label = out ? t('out') : closed ? t('closedBtn') : needsPick(p) ? t('pick') : t('add');
+      return `<article class="card" data-id="${esc(p.id)}" style="--dl:${Math.min(i, 8) * .05}s">
+  <button class="card-hit" type="button" aria-label="${esc(t('details'))} ${esc(nameOf(p))}">
+    <div class="media">${imgTag(p, i < 4)}${badgeHTML(p)}</div>
     <div class="info">
       ${p.brand ? `<span class="brand-s">${esc(p.brand)}</span>` : ''}
-      <h3 class="name">${esc(p.name)}</h3>
+      <h3 class="name">${esc(nameOf(p))}</h3>
       <p class="price">${priceHTML(p)}</p>
     </div>
   </button>
-  <button class="add" type="button" ${out || closed ? 'disabled' : ''}>${label}</button>
+  <button class="add" type="button" ${out || closed ? 'disabled' : ''}><span>${esc(label)}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
 </article>`;
     }
 
@@ -130,57 +135,65 @@
     }
 
     function renderChips() {
+      if (!MK.data) return;
       const cats = MK.data.categories;
       catsEl.hidden = cats.length < 2;
       if (cats.length < 2) return;
       const mk = (val, text) => `<button class="chip" type="button" data-cat="${esc(val)}" aria-pressed="${cat === val}">${text}</button>`;
-      catsEl.innerHTML = mk('all', 'الكل') + cats.map(c => mk(c.name, catIcon(c.name) + esc(c.name))).join('');
+      catsEl.innerHTML = mk('all', esc(t('all'))) + cats.map(c => mk(c.name, catIcon(c.name + ' ' + (c.en || '')) + esc(MK.catL(c.name)))).join('');
     }
 
     function renderShop() {
       const d = MK.data;
       if (!d) {
-        const msg = MK.errorMsg || 'اتأكد إن النت شغّال وحاول تاني.';
-        shop.innerHTML = `<div class="empty"><strong>مش قادرين نحمّل المنتجات دلوقتي</strong>${esc(msg)}<br><button class="btn btn-gold" type="button" id="retry">حاول تاني</button></div>`;
+        if (MK.status !== 'error') return;
+        shop.innerHTML = `<div class="empty"><strong>${esc(t('loadFail'))}</strong>${esc(t('loadFailS'))}<br><button class="btn btn-main" type="button" id="retry">${esc(t('retry'))}</button></div>`;
         countEl.textContent = '';
         return;
       }
       const list = d.products.filter(matches);
-      countEl.textContent = d.products.length ? `${list.length} منتج` : '';
-
-      if (!d.products.length) { shop.innerHTML = '<div class="empty"><strong>المنتجات جاية قريب</strong>لسه مفيش منتجات متضافة.</div>'; return; }
-      if (!list.length) { shop.innerHTML = '<div class="empty"><strong>مفيش نتايج</strong>جرّب كلمة تانية أو اختار «الكل».</div>'; return; }
+      countEl.textContent = d.products.length ? t('items')(list.length) : '';
+      if (!d.products.length) { shop.innerHTML = `<div class="empty"><strong>${esc(t('soon'))}</strong>${esc(t('soonS'))}</div>`; return; }
+      if (!list.length) { shop.innerHTML = `<div class="empty"><strong>${esc(t('noRes'))}</strong>${esc(t('noResS'))}</div>`; return; }
 
       let n = 0;
       const grid = items => `<div class="grid">${items.map(p => cardHTML(p, n++)).join('')}</div>`;
-
       if (!query && cat === 'all') {
         const known = new Set(d.categories.map(c => c.name));
-        const groups = d.categories.map(c => ({ t: c.name, ic: catIcon(c.name), items: list.filter(p => p.category === c.name) })).filter(g => g.items.length);
+        const groups = d.categories.map(c => ({ t: MK.catL(c.name), ic: catIcon(c.name + ' ' + (c.en || '')), items: list.filter(p => p.category === c.name) })).filter(g => g.items.length);
         const rest = list.filter(p => !known.has(p.category));
-        if (rest.length) groups.push({ t: groups.length ? 'منتجات أخرى' : 'المنتجات', items: rest });
-        shop.innerHTML = groups.map(g => `<h2 class="group-title">${g.ic || ''}${esc(g.t)}</h2>${grid(g.items)}`).join('');
+        if (rest.length) groups.push({ t: groups.length ? t('other') : t('products'), ic: ICON_TAG, items: rest });
+        shop.innerHTML = groups.map(g => `<h2 class="group-title"><span class="gi">${g.ic}</span>${esc(g.t)}<span class="gc">${g.items.length}</span></h2>${grid(g.items)}`).join('');
       } else {
         shop.innerHTML = grid(list);
       }
     }
 
+    function indexSearch(d) {
+      d.products.forEach(p => {
+        const en = p.en || {};
+        p._s = norm([p.name, p.brand, p.category, en.name, en.category, MK.catL(p.category), ...p.options.map(o => o.l), ...p.colors, ...(en.colors || [])].join(' '));
+      });
+    }
+
     function onData(d) {
       if (d) {
-        d.products.forEach(p => { p._s = norm([p.name, p.brand, p.category, ...p.options.map(o => o.l), ...p.colors].join(' ')); });
+        indexSearch(d);
         byId = new Map(d.products.map(p => [p.id, p]));
         if (cat !== 'all' && !d.categories.some(c => c.name === cat)) cat = 'all';
         cleanCart();
         renderChips();
         if (pd.open && pdState) { const p = byId.get(pdState.p.id); if (p) { pdState.p = p; renderPD(); } else pd.close(); }
-        if (cartDlg.open) { renderCart(); }
+        if (cartDlg.open) renderCart();
+        if (pendingOpen) { const id = decodeURIComponent(pendingOpen); pendingOpen = ''; if (byId.has(id)) setTimeout(() => openProduct(id), 200); }
       }
       renderShop(); renderBar();
     }
+
     function openProduct(id) {
       const p = byId.get(id); if (!p) return;
       pdState = { p, o: p.options[0] ? p.options[0].l : '', c: p.colors[0] || '', q: 1 };
-      renderPD(true);
+      renderPD();
       MK.open(pd);
       pdBody.scrollTop = 0;
     }
@@ -189,75 +202,72 @@
       const { p, o, c, q: qty } = pdState;
       const price = priceFor(p, o);
       const keep = pdBody.scrollTop;
-      $('#pdHead', host).textContent = p.name;
+      $('#pdHead').textContent = nameOf(p);
       const out = !p.in_stock, closed = !ordersOpen();
-      const badge = out ? '<span class="badge out">نفد</span>' : p.badge ? `<span class="badge">${esc(p.badge)}</span>` : '';
-
+      const desc = MK.L(p, 'description');
       pdBody.innerHTML = `
-<div class="pd-media media">${imgTag(p, true)}${badge}</div>
+<div class="pd-media media">${imgTag(p, true)}${badgeHTML(p)}</div>
 <div>
   ${p.brand ? `<p class="brand-s">${esc(p.brand)}</p>` : ''}
-  <h3 class="pd-title">${esc(p.name)}</h3>
+  <h3 class="pd-title">${esc(nameOf(p))}</h3>
 </div>
 <p class="pd-price">${price > 0
-    ? `${money(price)} <span class="cur">${cur()}</span>${p.old_price > price && !optOf(p, o)?.p ? `<s>${money(p.old_price)}</s>` : ''}`
-    : '<span class="cur">السعر عند التواصل</span>'}</p>
+    ? `${money(price)} <span class="cur">${cur()}</span>${p.old_price > price && !(optOf(p, o) && optOf(p, o).p) ? `<s>${money(p.old_price)}</s>` : ''}`
+    : `<span class="cur">${esc(t('ask'))}</span>`}</p>
 ${p.options.length > 1 ? `
-<div class="field"><span class="field-label" id="lbO">الخيار</span>
+<div class="field"><span class="field-label" id="lbO">${esc(t('option'))}</span>
   <div class="opts" role="radiogroup" aria-labelledby="lbO">${p.options.map(x =>
-    `<button class="opt" type="button" role="radio" aria-checked="${x.l === o}" data-opt="${esc(x.l)}">${esc(x.l)}</button>`).join('')}</div></div>` :
-    (p.options.length === 1 ? `<p class="pd-desc">الخيار: ${esc(p.options[0].l)}</p>` : '')}
+    `<button class="opt" type="button" role="radio" aria-checked="${x.l === o}" data-opt="${esc(x.l)}">${esc(MK.optL(p, x.l))}</button>`).join('')}</div></div>` :
+    (p.options.length === 1 ? `<p class="pd-desc">${esc(t('option'))}: ${esc(MK.optL(p, p.options[0].l))}</p>` : '')}
 ${p.colors.length > 1 ? `
-<div class="field"><span class="field-label" id="lbC">اللون</span>
+<div class="field"><span class="field-label" id="lbC">${esc(t('color'))}</span>
   <div class="opts" role="radiogroup" aria-labelledby="lbC">${p.colors.map(x =>
-    `<button class="opt" type="button" role="radio" aria-checked="${x === c}" data-color="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>` :
-    (p.colors.length === 1 ? `<p class="pd-desc">اللون: ${esc(p.colors[0])}</p>` : '')}
-${p.description ? `<p class="pd-desc">${esc(p.description)}</p>` : ''}`;
+    `<button class="opt" type="button" role="radio" aria-checked="${x === c}" data-color="${esc(x)}">${esc(MK.colL(p, x))}</button>`).join('')}</div></div>` :
+    (p.colors.length === 1 ? `<p class="pd-desc">${esc(t('color'))}: ${esc(MK.colL(p, p.colors[0]))}</p>` : '')}
+${desc ? `<p class="pd-desc">${esc(desc)}</p>` : ''}`;
       pdBody.scrollTop = keep;
-
-      const label = out ? 'غير متوفر حاليًا' : closed ? 'الطلبات متوقفة مؤقتًا'
-        : `أضف للطلب${price > 0 ? ' · ' + money(price * qty) + ' ' + cfg().currency : ''}`;
+      const label = out ? t('outLong') : closed ? t('closedLong') : t('add') + (price > 0 ? ' · ' + money(price * qty) + ' ' + MK.cur() : '');
       pdFoot.innerHTML = `<div class="pd-actions">
-  <div class="qty" role="group" aria-label="الكمية"><button type="button" data-q="1" aria-label="زيادة">+</button><span aria-live="polite">${qty}</span><button type="button" data-q="-1" aria-label="نقص">−</button></div>
-  <button class="btn btn-gold" type="button" id="pdAdd" ${out || closed ? 'disabled' : ''}>${esc(label)}</button>
+  <div class="qty" role="group" aria-label="${esc(t('qty'))}"><button type="button" data-q="-1" aria-label="${esc(t('dec'))}">−</button><span aria-live="polite">${qty}</span><button type="button" data-q="1" aria-label="${esc(t('inc'))}">+</button></div>
+  <button class="btn btn-main" type="button" id="pdAdd" ${out || closed ? 'disabled' : ''}>${esc(label)}</button>
 </div>`;
     }
 
     pd.addEventListener('click', e => {
-      const t = e.target.closest('button'); if (!t || !pdState) return;
-      if (t.dataset.opt != null) { pdState.o = t.dataset.opt; renderPD(); }
-      else if (t.dataset.color != null) { pdState.c = t.dataset.color; renderPD(); }
-      else if (t.dataset.q) { pdState.q = Math.max(1, Math.min(MAX_QTY, pdState.q + Number(t.dataset.q))); renderPD(); }
-      else if (t.id === 'pdAdd') {
+      const b = e.target.closest('button'); if (!b || !pdState) return;
+      if (b.dataset.opt != null) { pdState.o = b.dataset.opt; renderPD(); }
+      else if (b.dataset.color != null) { pdState.c = b.dataset.color; renderPD(); }
+      else if (b.dataset.q) { pdState.q = Math.max(1, Math.min(MAX_QTY, pdState.q + Number(b.dataset.q))); renderPD(); }
+      else if (b.id === 'pdAdd') {
         const { p, o, c, q: qty } = pdState;
-        if (addToCart(p, o, c, qty)) { pd.close(); MK.toast('اتضاف للطلب'); }
+        if (addToCart(p, o, c, qty)) { pd.close(); MK.toast(t('added')); }
       }
     });
+
     function renderCart() {
       if (!cart.length) { cartDlg.close(); return; }
       linesEl.innerHTML = cart.map((i, idx) => {
         const p = byId.get(i.id); const pr = priceFor(p, i.o);
-        const variant = [i.o, i.c].filter(Boolean).map(esc).join(' · ');
+        const variant = [i.o && MK.optL(p, i.o), i.c && MK.colL(p, i.c)].filter(Boolean).map(esc).join(' · ');
         return `<div class="line" data-i="${idx}">
   <div class="thumb media">${imgTag(p, true)}</div>
   <div>
-    <h3>${esc(p.name)}</h3>
+    <h3>${esc(nameOf(p))}</h3>
     ${variant ? `<p class="var">${variant}</p>` : ''}
     <div class="row">
-      <div class="qty" role="group" aria-label="الكمية"><button type="button" data-act="inc" aria-label="زيادة">+</button><span>${i.q}</span><button type="button" data-act="dec" aria-label="نقص">−</button></div>
-      <span class="lt">${pr > 0 ? money(pr * i.q) + ' ' + cur() : 'السعر عند التواصل'}</span>
+      <div class="qty" role="group" aria-label="${esc(t('qty'))}"><button type="button" data-act="dec" aria-label="${esc(t('dec'))}">−</button><span>${i.q}</span><button type="button" data-act="inc" aria-label="${esc(t('inc'))}">+</button></div>
+      <span class="lt">${pr > 0 ? money(pr * i.q) + ' ' + cur() : esc(t('ask'))}</span>
     </div>
-    <button class="link-del" type="button" data-act="del">حذف</button>
+    <button class="link-del" type="button" data-act="del">${esc(t('del'))}</button>
   </div>
 </div>`;
       }).join('');
-      const t = totals();
-      totalEl.innerHTML = t.sum > 0 ? `${money(t.sum)} ${cur()}` : '—';
-      noteEl.hidden = !t.unpriced;
-      noteEl.textContent = t.unpriced ? 'في منتجات سعرها عند التواصل ومش داخلة في الإجمالي.' : '';
-      $('#fAddrWrap', host).hidden = cfg().ask_address === false;
-      const closed = !ordersOpen();
-      $('#sendOrder', host).disabled = closed;
+      const s = totals();
+      totalEl.innerHTML = s.sum > 0 ? `${money(s.sum)} ${cur()}` : '—';
+      noteEl.hidden = !s.unpriced;
+      noteEl.textContent = s.unpriced ? t('unpriced') : '';
+      $('#fAddrWrap').hidden = cfg().ask_address === false;
+      $('#sendOrder').disabled = !ordersOpen();
     }
 
     function openCart() {
@@ -280,7 +290,7 @@ ${p.description ? `<p class="pd-desc">${esc(p.description)}</p>` : ''}`;
       saveCart(); renderBar(); renderCart();
     });
 
-    $('#clearCart', host).addEventListener('click', () => { cart = []; saveCart(); renderBar(); cartDlg.close(); MK.toast('اتفرّغت السلة'); });
+    $('#clearCart').addEventListener('click', () => { cart = []; saveCart(); renderBar(); cartDlg.close(); MK.toast(t('cleared')); });
     const wa = s => String(s == null ? '' : s).replace(/[*_~`]/g, '').replace(/\s+/g, ' ').trim();
 
     function waNumber() {
@@ -290,7 +300,7 @@ ${p.description ? `<p class="pd-desc">${esc(p.description)}</p>` : ''}`;
     }
 
     function buildMessage(name, address, note) {
-      const c = cfg(); const t = totals(); const lines = [];
+      const c = cfg(); const s = totals(); const lines = [];
       if (c.order_header) lines.push(wa(c.order_header), '');
       lines.push('*الطلب:*');
       cart.forEach((i, k) => {
@@ -299,37 +309,40 @@ ${p.description ? `<p class="pd-desc">${esc(p.description)}</p>` : ''}`;
         lines.push(`${k + 1}) ${wa(p.name)}${v ? ' (' + v + ')' : ''} × ${i.q}` + (pr > 0 ? ` = ${money(pr * i.q)} ${c.currency}` : ' (السعر عند التواصل)'));
       });
       lines.push('');
-      if (t.sum > 0) lines.push(`*الإجمالي:* ${money(t.sum)} ${c.currency}` + (t.unpriced ? ' (+ منتجات سعرها عند التواصل)' : ''));
+      if (s.sum > 0) lines.push(`*الإجمالي:* ${money(s.sum)} ${c.currency}` + (s.unpriced ? ' (+ منتجات سعرها عند التواصل)' : ''));
       lines.push('', `*الاسم:* ${wa(name)}`);
       if (address) lines.push(`*العنوان:* ${wa(address)}`);
       if (note) lines.push(`*ملاحظات:* ${wa(note)}`);
+      if (MK.lang() === 'en') lines.push('', '(Customer browsed in English)');
       if (c.order_footer) lines.push('', wa(c.order_footer));
       return lines.join('\n');
     }
 
-    $('#sendOrder', host).addEventListener('click', () => {
-      if (!ordersOpen()) { MK.toast(cfg().closed_message); return; }
+    $('#sendOrder').addEventListener('click', () => {
+      if (!ordersOpen()) { MK.toast(MK.cfgL('closed_message')); return; }
       const num = waNumber();
-      if (!num) { MK.toast('رقم الواتساب لسه متضبطش — كلّمنا من أي وسيلة تانية'); return; }
+      if (!num) { MK.toast(t('noWa')); return; }
       const name = fName.value.trim().slice(0, 60);
       if (!name) { fNameErr.hidden = false; fName.classList.add('bad'); fName.focus(); return; }
       fNameErr.hidden = true; fName.classList.remove('bad');
       const address = cfg().ask_address === false ? '' : fAddr.value.trim().slice(0, 200);
       const note = fNote.value.trim().slice(0, 300);
       if (!cart.length) return;
-
       try { localStorage.setItem(CUST_KEY, JSON.stringify({ name, address })); } catch (_) { }
       const url = `https://wa.me/${num}?text=${encodeURIComponent(buildMessage(name, address, note))}`;
       const w = window.open(url, '_blank');
       if (w) w.opener = null; else location.href = url;
-      MK.toast('اتفتح واتساب — اضغط إرسال عشان الطلب يوصلنا', 4200);
+      MK.toast(t('waOpened'), 4200);
     });
     fName.addEventListener('input', () => { fNameErr.hidden = true; fName.classList.remove('bad'); });
+
     let qTimer;
     q.addEventListener('input', () => {
       clearTimeout(qTimer);
       qTimer = setTimeout(() => { query = norm(q.value); renderShop(); }, 120);
     });
+    const initQ = new URLSearchParams(location.search).get('q');
+    if (initQ) { q.value = initQ.slice(0, 60); query = norm(q.value); }
 
     catsEl.addEventListener('click', e => {
       const b = e.target.closest('.chip'); if (!b) return;
@@ -345,16 +358,18 @@ ${p.description ? `<p class="pd-desc">${esc(p.description)}</p>` : ''}`;
       if (e.target.closest('.add')) {
         if (!p.in_stock || !ordersOpen()) return;
         if (needsPick(p)) { openProduct(p.id); return; }
-        if (addToCart(p, p.options[0] ? p.options[0].l : '', p.colors[0] || '', 1)) MK.toast('اتضاف للطلب');
-      } else if (e.target.closest('.card-hit')) {
-        openProduct(p.id);
-      }
+        if (addToCart(p, p.options[0] ? p.options[0].l : '', p.colors[0] || '', 1)) MK.toast(t('added'));
+      } else if (e.target.closest('.card-hit')) openProduct(p.id);
     });
 
     barBtn.addEventListener('click', openCart);
 
-    MK.showcase(host, v => { q.value = v; query = norm(v); cat = 'all'; renderChips(); renderShop(); $('.toolbar', host).scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-
+    MK.onLang(() => {
+      if (MK.data) indexSearch(MK.data);
+      renderChips(); renderShop(); renderBar();
+      if (pd.open && pdState) renderPD();
+      if (cartDlg.open) renderCart();
+    });
     MK.subscribe(onData);
   };
 })();

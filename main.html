@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>المتجر | ملكة الأيفون</title>
+<meta name="description" content="تسوّق موبايلات وجرابات ملكة الأيفون بأسعارها، وابعت طلبك على واتساب.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FBF5EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D0907" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="المتجر | ملكة الأيفون">
+<meta property="og:description" content="تسوّق موبايلات وجرابات ملكة الأيفون بأسعارها، وابعت طلبك على واتساب.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<script>try{var d=document.documentElement,t=localStorage.getItem('mk_theme'),l=localStorage.getItem('mk_lang');if(t==='light'||t==='dark')d.setAttribute('data-theme',t);if(l==='en'){d.lang='en';d.dir='ltr'}}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&family=Reem+Kufi:wght@500;600;700&family=Unbounded:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="one.css">
+<link rel="stylesheet" href="main/main.css">
+<script src="config.js" defer></script>
+<script src="one.js" defer></script>
+<script src="main/main.js" defer></script>
+</head>
+<body data-page="main">
+<a class="skip" href="#page" data-t="skip">تخطّى للمحتوى</a>
+<div class="announce" id="announce" role="status" hidden><span></span></div>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="index.html">
+      <img class="brand-logo" src="img/logo.webp" width="44" height="44" alt="" decoding="async">
+      <span class="brand-name" data-brand-name>ملكة الأيفون</span>
+    </a>
+    <nav class="nav" aria-label="القائمة" data-t-al="menu">
+      <a href="index.html" data-t="home">الرئيسية</a>
+      <a href="main.html" aria-current="page" data-t="shop">المتجر</a>
+    </nav>
+    <div class="top-act">
+      <button class="lang-btn" id="langBtn" type="button" aria-label="Switch to English"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></svg><span>English</span></button>
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="تبديل الثيم">
+        <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+<main id="page">
+  <section class="shop-hero">
+    <div class="hero-bg" aria-hidden="true"><span class="blob b1"></span></div>
+    <div class="wrap">
+      <p class="eyebrow"><span class="dot"></span><span data-t="shopEyebrow">المتجر</span></p>
+      <h1 class="shop-title" data-t="shopTitle">اختار. أضف. اطلب.</h1>
+      <p class="sec-sub" data-t="shopSub">كل المنتجات بأسعارها، والطلب بيوصلنا على واتساب.</p>
+    </div>
+  </section>
+  <div class="wrap">
+    <div class="toolbar" id="toolbar">
+      <label class="search">
+        <span class="sr" data-t="search">ابحث عن منتج</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="ابحث عن موبايل أو جراب…" data-t-ph="searchPh" autocomplete="off" enterkeyhint="search" maxlength="60">
+      </label>
+      <div class="cats" id="cats" role="group" aria-label="الأقسام" data-t-al="cats" hidden></div>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <div id="shop" class="shop-area">
+      <div class="grid" aria-hidden="true">
+        <div class="card skel"></div><div class="card skel"></div><div class="card skel"></div><div class="card skel"></div>
+        <div class="card skel"></div><div class="card skel"></div><div class="card skel"></div><div class="card skel"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cartbar" id="cartbar" hidden><button type="button" id="cartOpen" aria-haspopup="dialog"></button></div>
+
+  <dialog class="sheet" id="pd" aria-labelledby="pdHead">
+    <div class="sheet-head"><h2 id="pdHead" data-t="pdHead">تفاصيل المنتج</h2><button class="close" type="button" data-close data-t-al="close" aria-label="إغلاق"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="sheet-body" id="pdBody"></div>
+    <div class="sheet-foot" id="pdFoot"></div>
+  </dialog>
+
+  <dialog class="sheet" id="cart" aria-labelledby="cartHead">
+    <div class="sheet-head"><h2 id="cartHead" data-t="cartHead">طلبك</h2><button class="close" type="button" data-close data-t-al="close" aria-label="إغلاق"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="sheet-body">
+      <div class="lines" id="cartLines"></div>
+      <div class="total"><span data-t="total">الإجمالي</span><span class="v" id="cartTotal"></span></div>
+      <p class="note-s" id="cartNote" hidden></p>
+      <form class="form" id="orderForm" novalidate>
+        <label><span data-t="fName">الاسم</span>
+          <input id="fName" name="name" type="text" autocomplete="name" maxlength="60" required>
+          <span class="err" id="fNameErr" data-t="fNameErr" hidden>اكتب اسمك عشان نعرف نكلمك.</span>
+        </label>
+        <label id="fAddrWrap"><span data-t="fAddr">العنوان</span>
+          <input id="fAddr" name="address" type="text" autocomplete="street-address" maxlength="200">
+        </label>
+        <label><span data-t="fNote">ملاحظات (اختياري)</span>
+          <textarea id="fNote" name="note" maxlength="300"></textarea>
+        </label>
+      </form>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn btn-main btn-block" type="button" id="sendOrder">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12.04 2a9.9 9.9 0 0 0-8.5 14.9L2 22l5.25-1.38A9.9 9.9 0 1 0 12.04 2zm5.8 14.1c-.25.7-1.45 1.33-2 1.4-.52.07-1.17.1-1.88-.12a17 17 0 0 1-1.7-.63c-3-1.3-4.95-4.32-5.1-4.52-.15-.2-1.2-1.6-1.2-3.04 0-1.45.76-2.16 1.03-2.45.27-.3.6-.37.8-.37h.58c.18 0 .43-.07.67.5.25.6.84 2.06.92 2.2.07.15.12.32.02.52-.1.2-.15.32-.3.5l-.45.52c-.15.15-.3.31-.13.6.17.3.77 1.27 1.65 2.05 1.13 1 2.08 1.32 2.38 1.47.3.15.47.12.65-.07.17-.2.75-.87.95-1.17.2-.3.4-.25.67-.15.27.1 1.72.8 2.02.96.3.15.5.22.57.35.07.12.07.7-.18 1.4z"/></svg>
+        <span data-t="send">إرسال الطلب على واتساب</span>
+      </button>
+      <button class="btn btn-ghost btn-block" type="button" id="clearCart" data-t="clear">تفريغ السلة</button>
+    </div>
+  </dialog>
+</main>
+<footer class="foot" id="foot"></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
